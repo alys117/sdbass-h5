@@ -63,6 +63,18 @@ export const constantRoutes = [
     meta: { title: 'Example', icon: 'el-icon-s-help' },
     children: [
       {
+        path: 'tariff-satisfaction',
+        name: 'TariffSatisfaction',
+        component: () => import('@/views/tariff-satisfaction/index'),
+        meta: { title: '资费满意度', icon: 'table' }
+      },
+      {
+        path: 'wq',
+        name: 'Wq',
+        component: () => import('@/views/wq/index'),
+        meta: { title: '微企攻坚', icon: 'table' }
+      },
+      {
         path: 'table',
         name: 'Table',
         component: () => import('@/views/table/index'),

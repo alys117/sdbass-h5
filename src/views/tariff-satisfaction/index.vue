@@ -1,13 +1,16 @@
 <template>
   <div class="container">
     <div :style="{height: height+'px'}" />
-    <div :style="{ '--left': left, '--top': top, '--size': size }" class="data-date">{{ date }}</div>
     <div class="content">
-      <div class="head">
-        <div class="title">二</div>
-        <div class="title">&nbsp;分地市发展情况&nbsp;</div>
+      <module1 />
+      <div>
+        <bar-chart :height="'150px'" />
       </div>
-      <div ref="tableContainer2" class="table-container" :style="{marginRight: 'auto',marginLeft: 'auto',width: '95%',height: height2+'px'}">
+      <div>
+        <line-chart :height="'150px'" :chart-data="lineChartData" />
+      </div>
+      <module2 />
+      <div ref="tableContainer" class="table-container" :style="{marginRight: 'auto',marginLeft: 'auto',width: '95%',height: height2+'px'}">
         <el-table
           ref="table1"
           :row-style="selectedRowStyle"
@@ -16,10 +19,12 @@
           :data="tableData"
           :fit="true"
         >
-          <el-table-column prop="cityname" label="地市" width="35" />
-          <el-table-column label="政企收入">
-            <el-table-column prop="name" label="政企收入年累计完成进度" width="60" />
-            <el-table-column prop="col1" label="其中本业务收入占比" width="50">
+          <el-table-column prop="cityname" fixed label="地市" width="35" />
+          <el-table-column prop="name" label="宽带使用感知" width="50" />
+          <el-table-column prop="name" label="较上月环比" width="40" />
+          <el-table-column label="宽带使用感知关键过程表现">
+            <el-table-column prop="name" label="上网速度" width="50" />
+            <el-table-column prop="col1" label="网络连接稳定性" width="50">
               <template slot-scope="scope">
                 <div
                   :style="{backgroundColor: color(scope.row.sn),fontWeight: scope.row.cityname === '全省'?'bold':'normal'}"
@@ -27,32 +32,37 @@
                   {{ (scope.row.col1*100).toFixed(1)+'%' }}</div>
               </template>
             </el-table-column>
+            <el-table-column prop="name" label="完游戏" width="50" />
+            <el-table-column prop="name" label="看视频" width="50" />
+            <el-table-column prop="name" label="看互联网电视" width="50" />
+            <el-table-column prop="name" label="浏览图文" width="50" />
           </el-table-column>
-          <el-table-column label="重点产品发展情况">
-            <el-table-column prop="name" width="40" label="畅享版企宽" />
-            <el-table-column prop="sn" width="40" label="尊享版企宽" />
-            <el-table-column prop="province" width="40" label="商务快线" />
-<!--            <el-table-column prop="province" width="40" label="千里眼" />-->
-            <el-table-column prop="province" width="40" label="视频彩铃" />
-            <el-table-column prop="province" min-width="30" label="互联网专线" />
-          </el-table-column>
+          <el-table-column prop="col1" label="样本量" min-width="50" />
         </el-table>
       </div>
       <div :style="{height: height3+'px'}">
         <div class="description" :style="{ '--size1': size1, '--size2': size2 }">
           <p>
-            解释口径：微企市场收入为系统内C2D类集团723个计费科目收入；月累计完成进度为当月收入/去年同期月收入+月净增目标收入；木本业务收入占比:当月木本业务科目收入/微企市场当月收入，重点产品发展：当月重点产品累计月发展量；产能占比：各渠道当月发展量/渠道当月发展总量
+            数据来源：省内用后即评宽带上网满意度调研数据
           </p>
         </div>
       </div>
     </div>
-    <div :style="{height: height3/5 + 'px'}" />
-  </div></template>
+    <div :style="{height: height3 + 'px'}" class="version">
+      中国移动山东公司客服部（V1.0版)
+    </div>
+  </div>
+</template>
 <script>
 import dayjs from 'dayjs'
 import { getList } from '@/api/sdbass'
+import BarChart from '@/views/components/BarChart'
+import LineChart from '@/views/components/LineChart'
+import Module1 from '@/views/tariff-satisfaction/module1.vue'
+import Module2 from '@/views/tariff-satisfaction/module2.vue'
 export default {
   name: 'Wq',
+  components: { BarChart, LineChart, Module1, Module2 },
   data() {
     return {
       date: dayjs().format('M月D日'),
@@ -65,7 +75,11 @@ export default {
       height1: 136,
       height2: 400,
       height3: 50,
-      tableData: []
+      tableData: [],
+      lineChartData: {
+        expectedData: [100, 120, 161, 134, 105, 160, 165],
+        actualData: [120, 82, 91, 154, 162, 140, 145]
+      }
     }
   },
   computed: {
@@ -111,7 +125,6 @@ export default {
     })
   },
   created: function() {
-    console.log('created')
     var h = ''
     h += ' 网页可见区域宽：' + document.body.clientWidth
     h += ' 网页可见区域高：' + document.body.clientHeight
@@ -132,17 +145,17 @@ export default {
     console.log(h); this.deviceInfo = h
     this.top = document.body.clientWidth * 0.32 * 0.62 + 'px'
     this.size = document.body.clientWidth / 414 * 20 + 'px'
-    this.size1 = document.body.clientWidth / 414 * 6 + 'px'
-    this.size2 = document.body.clientWidth / 414 * 10 + 'px'
-    this.height3 = document.body.clientWidth / 414 * 50
+    this.size1 = document.body.clientWidth / 414 * 10 + 'px'
+    this.size2 = document.body.clientWidth / 414 * 12 + 'px'
+    this.height3 = document.body.clientWidth / 414 * 35
     if (document.body.clientWidth === 414) {
       this.height = 244
       this.height1 = 136
-      this.height2 = 323 // iphone 11 pro max
+      this.height2 = 345 // iphone 11 pro max
     } else if (document.body.clientWidth === 412) {
       this.height = 244
       this.height1 = 135
-      this.height2 = 321 // s20 ultra
+      this.height2 = 346 // s20 ultra
     } else if (document.body.clientWidth === 375) {
       this.height = 222
       this.height1 = 124
@@ -154,7 +167,7 @@ export default {
     } else if (document.body.clientWidth === 390) {
       this.height = 234
       this.height1 = 128
-      this.height2 = 304 // iphone 12/13 pro
+      this.height2 = 345 // iphone 12/13 pro
     } else {
       const rate = document.body.clientWidth / 375
       this.height = 222 * rate
@@ -184,15 +197,6 @@ export default {
   font-family: 'Microsoft YaHei',serif;
 }
 
-.data-date {
-  position: absolute;
-  top: var(--top);
-  left: var(--left);
-  font-size: var(--size);
-  color: red;
-  font-weight: 700;
-}
-
 .content {
   background-color: white;
   border-radius: 10px;
@@ -202,30 +206,22 @@ export default {
   margin-right: auto;
 }
 
-.head {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  align-items: center;
-  padding: 10px 10px;
-}
-
-.title {
-  font-size: 18px;
-  font-weight: 900;
-  line-height: 30px;
-  color: white;
-  padding: 0 10px;
-  border-radius: 15px;
-  background-color: #2B9AEB;
-}
 .description {
   font-size: var(--size1);
   line-height: var(--size2);
   color: black;
   padding: 5px 15px;
 }
-
+.version{
+  text-align: center;
+  flex-direction: column;
+  display: flex;
+  font-size: 12px;
+  color: #232323;
+  font-weight: 700;
+  justify-content: end;
+  padding-bottom: 5px;
+}
 .table-container .el-table {
   font-size: 10px;
   //transform: scale(0.5);

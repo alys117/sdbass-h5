@@ -64,6 +64,12 @@ export const constantRoutes = [
     meta: { title: 'Example', icon: 'el-icon-s-help' },
     children: [
       {
+        path: 'broadband-satisfaction',
+        name: 'BroadbandSatisfaction',
+        component: () => import('@/views/broadband-satisfaction/index'),
+        meta: { title: '宽带满意度', icon: 'table' }
+      },
+      {
         path: 'tariff-satisfaction',
         name: 'TariffSatisfaction',
         component: () => import('@/views/tariff-satisfaction/index'),
@@ -72,18 +78,21 @@ export const constantRoutes = [
       {
         path: 'wq',
         name: 'Wq',
+        hidden: true,
         component: () => import('@/views/wq/index'),
         meta: { title: '微企攻坚', icon: 'table' }
       },
       {
         path: 'table',
         name: 'Table',
+        hidden: true,
         component: () => import('@/views/table/index'),
         meta: { title: 'Table', icon: 'table' }
       },
       {
         path: 'tree',
         name: 'Tree',
+        hidden: true,
         component: () => import('@/views/tree/index'),
         meta: { title: 'Tree', icon: 'tree' }
       }
@@ -93,6 +102,7 @@ export const constantRoutes = [
   {
     path: '/form',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -106,6 +116,7 @@ export const constantRoutes = [
   {
     path: '/nested',
     component: Layout,
+    hidden: true,
     redirect: '/nested/menu1',
     name: 'Nested',
     meta: {
@@ -165,6 +176,7 @@ export const constantRoutes = [
   {
     path: 'external-link',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'https://panjiachen.github.io/vue-element-admin-site/#/',

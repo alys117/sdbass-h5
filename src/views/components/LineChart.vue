@@ -76,11 +76,18 @@ export default {
       //   ]
       // })
     },
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ classification, actualData } = {}) {
       this.chart.setOption({
         xAxis: {
-          data: ['5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7'],
+          data: classification,
           boundaryGap: false,
+          axisLabel: {
+            show: true, // 显示坐标轴上的文字
+            textStyle: {
+              color: '#232323',
+              fontSize: 12
+            }
+          },
           axisTick: {
             show: false
           },
@@ -129,8 +136,7 @@ export default {
                 show: true,
                 position: 'top',
                 formatter: function(params, data) {
-                  console.log(params)
-                  if (params.name === '5.7') { return params.value }
+                  if (params.name === classification.at(-1)) { return params.value }
                   return ''
                 },
                 fontSize: 12

@@ -32,6 +32,7 @@ module.exports = {
   devServer: {
     port: port,
     open: true,
+    disableHostCheck: true, // 内网穿透访问Vue项目的时候，页面出现Invalid Host header
     overlay: {
       warnings: false,
       errors: true
@@ -39,10 +40,10 @@ module.exports = {
     before: require('./mock/mock-server.js'),
     proxy: {
       '/dev-api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8075',
         changeOrigin: true,
         pathRewrite: {
-          '^/dev-api': ''
+          '^/dev-api/webroot': '/webroot'
         }
       }
     }

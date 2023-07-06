@@ -31,6 +31,7 @@ export default {
 <style scoped lang="scss">
 .module2-container{
   padding: 10px;
+  padding-top: 20px;
   display: flex;
   .module2{
     flex: 1;

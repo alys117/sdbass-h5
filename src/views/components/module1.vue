@@ -19,7 +19,7 @@ export default {
 .mobile1-container{
   display: flex;
   justify-content: center;
-  padding: 20px;
+  padding: 10px;
   .left{
     display: flex;
     flex-direction: column;
@@ -28,12 +28,13 @@ export default {
     flex: 3;
     gap: 5px;
     .title{
-      font-family: "Microsoft YaHei","PingFang SC",serif;
+      font-family: "PingFang SC","Microsoft YaHei",serif;
       font-size: 16px;
       font-weight: 900;
     }
     .number{
       color: #769bd4;
+      font-family: "Tw Cen MT Condensed Extra Bold";
       font-size: 30px;
       font-weight: 900;
     }
@@ -51,7 +52,7 @@ export default {
     gap: 5px;
     padding-bottom: 5px;
     .title{
-      font-family: "Microsoft YaHei","PingFang SC",serif;
+      font-family: "PingFang SC","Microsoft YaHei",serif;
       font-size: 16px;
       font-weight: 900;
     }

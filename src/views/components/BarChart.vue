@@ -23,6 +23,14 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    classification: {
+      type: Array,
+      required: true
+    },
+    data: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -62,7 +70,7 @@ export default {
         },
         yAxis: [{
           type: 'category',
-          data: ['玩游戏', '浏览图文', '看视频', '上网速度', '看互联网电视', '网络连接稳定性'].reverse(),
+          data: this.classification,
           axisTick: {
             alignWithLabel: true,
             show: false // 不显示坐标轴刻度线
@@ -101,7 +109,7 @@ export default {
           barWidth: '40%',
           itemStyle: {
             normal: {
-              color: '#769bd4',
+              color: 'rgb(91, 155, 213)',
               barBorderRadius: 2,
               label: {
                 show: true,
@@ -113,7 +121,7 @@ export default {
               }
             }
           },
-          data: [30, 52, 200, 334, 390, 330, 220],
+          data: this.data,
           animationDuration
         }]
       })

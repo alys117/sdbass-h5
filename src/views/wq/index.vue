@@ -84,8 +84,6 @@ export default {
   data() {
     return {
       date: dayjs().format('M月D日'),
-      left: '68%',
-      top: '75px',
       size: '20px',
       size1: '20px',
       size2: '10px',
@@ -158,7 +156,6 @@ export default {
     h += ' 你的屏幕设置是 ' + window.screen.colorDepth + ' 位彩色'
     h += ' 你的屏幕设置 ' + window.screen.deviceXDPI + ' 像素/英寸'
     console.log(h); this.deviceInfo = h
-    this.top = document.body.clientWidth * 0.32 * 0.62 + 'px'
     this.size = document.body.clientWidth / 414 * 20 + 'px'
     this.size1 = document.body.clientWidth / 414 * 6 + 'px'
     this.size2 = document.body.clientWidth / 414 * 10 + 'px'

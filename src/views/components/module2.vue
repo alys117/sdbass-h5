@@ -3,35 +3,54 @@
     <div class="module2">
       <div class="module2-1">
         <div class="title">85分以上</div>
-        <div><span class="number-green">3</span><span class="dishi">地市</span></div>
+        <div><span class="number-green">{{up85}}</span><span class="dishi">地市</span></div>
       </div>
       <div class="module2-1">
-        <div class="title">75分以上</div>
-        <div><span class="number-red">8</span><span class="dishi">地市</span></div>
+        <div class="title">75分以下</div>
+        <div><span class="number-red">{{down75}}</span><span class="dishi">地市</span></div>
       </div>
     </div>
     <div class="middle" />
     <div class="module2">
       <div class="module2-1">
         <div class="title">环比上月<br>提升</div>
-        <div><span class="number-green">7</span><span class="dishi">地市</span></div>
+        <div><span class="number-green">{{huanbiUp}}</span><span class="dishi">地市</span></div>
       </div>
       <div class="module2-1">
         <div class="title">环比上月<br>下滑</div>
-        <div><span class="number-red">8</span><span class="dishi">地市</span></div>
+        <div><span class="number-red">{{huanbiDown}}</span><span class="dishi">地市</span></div>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'Module2'
+  name: 'Module2',
+  props: {
+    up85: {
+      type: Number,
+      default: () => { return 0 }
+    },
+    down75: {
+      type: Number,
+      default: () => { return 0 }
+    },
+    huanbiUp: {
+      type: Number,
+      default: () => { return 0 }
+    },
+    huanbiDown: {
+      type: Number,
+      default: () => { return 0 }
+    }
+  },
 }
 </script>
 <style scoped lang="scss">
 .module2-container{
   padding: 10px;
   padding-top: 20px;
+  font-family: "Microsoft YaHei","PingFang SC",serif;
   display: flex;
   .module2{
     flex: 1;
@@ -45,7 +64,7 @@ export default {
       gap: 30px;
       .title{
         font-weight: 900;
-        font-size: 16px;
+        font-size: 18px;
       }
       .number-red{
         font-size: 36px;

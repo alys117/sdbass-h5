@@ -24,18 +24,23 @@ export default {
       type: String,
       default: '300px'
     },
-    classification: {
-      type: Array,
-      required: true
-    },
     data: {
-      type: Array,
+      type: Object,
       required: true
     }
   },
   data() {
     return {
       chart: null
+    }
+  },
+  watch: {
+    data: {
+      deep: true,
+      handler(val) {
+        console.log('data changed', val)
+        this.initChart()
+      }
     }
   },
   mounted() {
@@ -53,8 +58,7 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
-
-      this.chart.setOption({
+      const options = {
         tooltip: {
           trigger: 'axis',
           axisPointer: { // 坐标轴指示器，坐标轴触发有效
@@ -70,7 +74,7 @@ export default {
         },
         yAxis: [{
           type: 'category',
-          data: this.classification,
+          data: this.data.classification,
           axisTick: {
             alignWithLabel: true,
             show: false // 不显示坐标轴刻度线
@@ -88,6 +92,12 @@ export default {
         }],
         xAxis: [{
           type: 'value',
+          min: function(value) {
+            return value.min - 10
+          },
+          max: function(value) {
+            return value.max + 10
+          },
           show: false, // 不显示坐标轴线、坐标轴刻度线和坐标轴上的文字
           axisTick: {
             show: false // 不显示坐标轴刻度线
@@ -121,10 +131,11 @@ export default {
               }
             }
           },
-          data: this.data,
+          data: this.data.actualData,
           animationDuration
         }]
-      })
+      }
+      this.chart.setOption(options)
     }
   }
 }

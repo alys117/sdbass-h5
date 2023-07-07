@@ -23,14 +23,14 @@
         <div class="trapezoid-inner" />
       </div>
       <div class="content">
-        <module1 />
+        <module1 :jqmyd="jqmyd" :jqmyd_hb_rate_lastday="jqmyd_hb_rate_lastday" :jqmyd_hb_rate_premlastday="jqmyd_hb_rate_premlastday" />
         <div>
-          <bar-chart :height="'150px'" :classification="['套餐价格', '套餐适配度', '套餐办理规范性', '资费规则清晰度', '套餐办理便捷性', '账单服务'].reverse()" :data="[71.5, 72.20, 76.29, 76.69, 78.18, 81.32].reverse()" />
+          <bar-chart :height="'150px'" :data="barChartData" />
         </div>
         <div>
           <line-chart :height="'150px'" :chart-data="lineChartData" />
         </div>
-        <module2 />
+        <module2 :up85="up85" :down75="down75" :huanbiUp="huanbiUp" :huanbiDown="huanbiDown" />
         <div ref="tableContainer" class="table-container" :style="{marginRight: 'auto',marginLeft: 'auto',width: '95%',height: height2+'px'}">
           <el-table
             ref="table1"
@@ -40,21 +40,25 @@
             :data="tableData"
             :fit="true"
           >
-            <el-table-column prop="city_name" fixed label="地市" width="35" />
+            <el-table-column prop="city_name" fixed label="地市" width="35">
+              <template slot-scope="scope">
+                <div :style="{fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.city_name }}</div>
+              </template>
+            </el-table-column>>
             <el-table-column prop="jqmyd" label="手机资费满意度" width="40">
               <template slot-scope="scope">
-                <div :style="{backgroundColor: color(scope.row.sn_jqmyd)}">{{ scope.row.jqmyd }}</div>
+                <div :style="{backgroundColor: color(scope.row.sn_jqmyd),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.jqmyd }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="jqmyd_hb_rate_premlastday" label="较上月环比" width="40">
               <template slot-scope="scope">
-                <div :style="{backgroundColor: color2(scope.row.jqmyd_hb_rate_premlastday)}">{{ scope.row.jqmyd_hb_rate_premlastday }}</div>
+                <div :style="{backgroundColor: color2(scope.row.jqmyd_hb_rate_premlastday),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.jqmyd_hb_rate_premlastday }}</div>
               </template>
             </el-table-column>
             <el-table-column label="手机资费关键过程表现">
               <el-table-column prop="package_fit" label="套餐适配度" width="40">
                 <template slot-scope="scope">
-                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd)}">{{ scope.row.package_fit }}</div>
+                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.package_fit }}</div>
                 </template>
               </el-table-column>
               <el-table-column prop="rule_clarity" label="资费规则清晰度" width="48">
@@ -64,16 +68,20 @@
               </el-table-column>
               <el-table-column prop="transact_norms" label="套餐办理规范性" width="50">
                 <template slot-scope="scope">
-                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd)}">{{ scope.row.transact_norms }}</div>
+                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.transact_norms }}</div>
                 </template>
               </el-table-column>
               <el-table-column prop="transact_handy" label="套餐办理便携性" width="50">
                 <template slot-scope="scope">
-                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd)}">{{ scope.row.transact_handy }}</div>
+                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.transact_handy }}</div>
                 </template>
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="user_num" label="样本量" min-width="40" />
+            <el-table-column prop="user_num" label="样本量" min-width="40">
+              <template slot-scope="scope">
+                <div :style="{fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.user_num }}</div>
+              </template>
+            </el-table-column>>
           </el-table>
         </div>
         <div :style="{height: height3+'px'}">
@@ -92,7 +100,7 @@
 </template>
 <script>
 import dayjs from 'dayjs'
-import { getMaxOpTime, getTableList } from '@/api/sdbass'
+import { getMaxOpTime, getTableList, getTrendList } from '@/api/sdbass'
 import BarChart from '@/views/components/BarChart'
 import LineChart from '@/views/components/LineChart'
 import Module1 from '@/views/components/module1.vue'
@@ -111,9 +119,20 @@ export default {
       height2: 400,
       height3: 50,
       tableData: [],
+      jqmyd: 0, // #满意度--当前表现值
+      jqmyd_hb_rate_lastday: 0, // 较昨日环比
+      jqmyd_hb_rate_premlastday: 0, //  较上月环比
+      up85: 0, // 85分以上
+      down75: 0, // 75-85分
+      huanbiUp: 0, // 环比上升
+      huanbiDown: 0, // 环比下降
+      barChartData: {
+        classification: ['套餐价格', '套餐适配度', '套餐办理规范性', '资费规则清晰度', '套餐办理便捷性', '账单服务'].reverse(),
+        actualData: []
+      }, // 柱状图数据
       lineChartData: {
-        classification: ['5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7', '5.8', '5.9', '5.10', '5.11', '5.12', '5.13', '5.14', '5.15', '5.16', '5.17', '5.18', '5.19', '5.20', '5.21', '5.22', '5.23', '5.24', '5.25', '5.26', '5.27', '5.28', '5.29', '5.30', '5.31'],
-        actualData: [120, 82, 91, 154, 162, 100, 96, 124, 152, 120, 82, 91, 154, 162, 140, 147, 152, 130, 120, 82, 91, 154, 162, 140, 147, 152, 130, 162, 140, 147, 152]
+        classification: [],
+        actualData: []
       }
     }
   },
@@ -123,9 +142,9 @@ export default {
     },
     color() {
       return sn => {
-        if (sn > 15) {
+        if (sn > 14) {
           return '#ffc7ce'
-        } else if (sn < 5 && sn !== 1) {
+        } else if (sn < 4 && sn !== 0) {
           return '#c6e0b4'
         } else {
           return 'rgba(0,0,0,0)'
@@ -143,37 +162,64 @@ export default {
     }
   },
   async mounted() {
-    const res = await getMaxOpTime()
-    this.day = res.data[0].op_time.slice(0, 10)
-    const table = await getTableList({ op_time: dayjs(this.day).add(0, 'day').format('YYYY-MM-DD') })
-    this.tableData = table.data
-    this.tableData.map(item => {
-      item.jqmyd = item.jqmyd?.toFixed(2) // 满意度
-      item.jqmyd_hb_rate_premlastday = item.jqmyd_hb_rate_premlastday?.toFixed(2) // 较上月环比
-      item.package_fit = item.package_fit?.toFixed(2) // 套餐适配度
-      item.rule_clarity = item.rule_clarity?.toFixed(2) // 资费规则清晰度
-      item.transact_norms = item.transact_norms?.toFixed(2) // 套餐办理规范性
-      item.transact_handy = item.transact_handy?.toFixed(2)
+    const res = await getMaxOpTime() // 获取最大时间
+    this.day = res.data[0].op_time.slice(0, 10) // 设置日期
+    const trend = await getTrendList({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取趋势
+    this.lineChartData.actualData = trend.data.map(item => item.jqmyd?.toFixed(2))
+    this.lineChartData.classification = trend.data.map(item => item.op_time.slice(5, 10))
+
+    const table = await getTableList({ op_time: dayjs(this.day).add(0, 'day').format('YYYY-MM-DD') }) // 获取表格
+    this.tableData = table.data || []
+    const arr = ['jqmyd', 'jqmyd_hb_rate_premlastday', 'package_fit', 'rule_clarity', 'transact_norms', 'transact_handy', 'jqmyd_hb_rate_lastday',
+      'package_price', 'billing_service']
+    this.tableData.forEach(item => {
+      arr.forEach(i => {
+        item[i] = parseFloat(item[i]?.toFixed(2)) // 保留两位小数
+      })
     })
-    const arr = ['jqmyd', 'jqmyd_hb_rate_premlastday', 'package_fit', 'rule_clarity', 'transact_norms', 'transact_handy']
     arr.forEach(i => {
       // 排序
-      this.tableData.sort((a, b) => b[i] - a[i])
-      let obj = {}
-      this.tableData.forEach((item, index) => {
-        if (item.city_name === '全省') {
-          obj = item
-          this.tableData.splice(index, 1)
-          return
+      this.tableData.sort((a, b) => {
+        if (a.city_name === '全省') {
+          return -1
+        } else if (b.city_name === '全省') {
+          return 1
         }
+        return b[i] - a[i]
       })
-      this.tableData.unshift(obj)
       // 打上序号
       this.tableData.map((item, index) => {
-        item['sn_' + i] = index + 1
+        item['sn_' + i] = index
       })
     })
     this.tableData.sort((a, b) => a.sn_jqmyd - b.sn_jqmyd)
+
+    this.jqmyd = this.tableData[0].jqmyd && parseFloat(this.tableData[0].jqmyd)
+    this.jqmyd_hb_rate_lastday = this.tableData[0].jqmyd_hb_rate_lastday && parseFloat(this.tableData[0].jqmyd_hb_rate_lastday)
+    this.jqmyd_hb_rate_premlastday = this.tableData[0].jqmyd_hb_rate_premlastday && parseFloat(this.tableData[0].jqmyd_hb_rate_premlastday)
+    this.barChartData.actualData = [
+      this.tableData[0].package_price,
+      this.tableData[0].package_fit,
+      this.tableData[0].rule_clarity,
+      this.tableData[0].transact_norms,
+      this.tableData[0].transact_handy,
+      this.tableData[0].billing_service
+    ].reverse()
+    this.tableData.forEach(item => {
+      if (item.city_name === '全省') {
+        return
+      }
+      if (item.jqmyd > 85) {
+        this.up85++
+      } else if (item.jqmyd < 75) {
+        this.down75++
+      }
+      if (item.jqmyd_hb_rate_premlastday > 0) {
+        this.huanbiUp++
+      } else if (item.jqmyd_hb_rate_premlastday < 0) {
+        this.huanbiDown++
+      }
+    })
   },
   created: function() {
     var h = ''
@@ -250,7 +296,7 @@ export default {
   position: absolute;
   top: 80px;
   //left: 0;
-  opacity: 0.5;
+  opacity: 0.3;
   width: 100%;
   height: 100vh;
   background: url(../../assets/images/形状背景.png) no-repeat;

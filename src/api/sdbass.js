@@ -22,3 +22,11 @@ export function getTableList(params) {
     params
   })
 }
+
+export function getTrendList(params) {
+  return request({
+    url: '/webroot/decision/sp/client/api/service/st_user_instant_evaluate_zftc_dm/trend',
+    method: 'get',
+    params
+  })
+}

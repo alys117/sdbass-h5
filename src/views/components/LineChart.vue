@@ -110,6 +110,13 @@ export default {
           padding: [5, 10]
         },
         yAxis: {
+          type: 'value',
+          min: function(value) {
+            return value.min - 1
+          },
+          max: function(value) {
+            return value.max + 1
+          },
           axisTick: {
             show: false // 不显示坐标轴刻度线
           },

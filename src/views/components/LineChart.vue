@@ -76,16 +76,23 @@ export default {
       //   ]
       // })
     },
-    setOptions({ classification, actualData } = {}) {
+    setOptions({ classification, actualData, lastmonth, thismonth } = {}) {
       this.chart.setOption({
         xAxis: {
           data: classification,
           boundaryGap: false,
           axisLabel: {
             show: true, // 显示坐标轴上的文字
+            interval: 0, // 坐标轴上的文字全部显示， 这个要配合formatter使用才好使，只写formatter会有些不显示
+            formatter: function(params) {
+              if (parseInt(params) % 1 === 0) {
+                return params
+              }
+              return ''
+            },
             textStyle: {
               color: '#232323',
-              fontSize: 12
+              fontSize: 8
             }
           },
           axisTick: {
@@ -112,6 +119,7 @@ export default {
         yAxis: {
           type: 'value',
           min: function(value) {
+            console.log(value)
             return value.min - 1
           },
           max: function(value) {
@@ -131,10 +139,45 @@ export default {
           }
         },
         legend: {
-          data: ['日变动趋势']
+          data: ['当月', '上月']
         },
         series: [{
-          name: '日变动趋势',
+          name: '当月',
+          smooth: false, // 平滑曲线
+          type: 'line',
+          itemStyle: {
+            normal: {
+              label: {
+                show: true,
+                position: 'top',
+                formatter: function(params) {
+                  let index = 0
+                  for (let i = thismonth.length - 1; i > -1; i--) {
+                    if (thismonth[i] !== undefined) {
+                      index = i
+                      break
+                    }
+                  }
+                  if (params.name === classification.at(index).toString()) { return params.value }
+                  return ''
+                },
+                fontSize: 12
+              },
+              color: 'red',
+              lineStyle: {
+                color: 'red',
+                width: 2
+              },
+              areaStyle: {
+                color: '#f3f8ff'
+              }
+            }
+          },
+          data: thismonth,
+          animationDuration: 500,
+          animationEasing: 'quadraticOut'
+        }, {
+          name: '上月',
           smooth: false, // 平滑曲线
           type: 'line',
           itemStyle: {
@@ -143,7 +186,14 @@ export default {
                 show: true,
                 position: 'top',
                 formatter: function(params, data) {
-                  if (params.name === classification.at(-1)) { return params.value }
+                  let index = 0
+                  for (let i = lastmonth.length - 1; i > -1; i--) {
+                    if (lastmonth[i] !== undefined) {
+                      index = i
+                      break
+                    }
+                  }
+                  if (params.name === classification.at(index).toString()) { return params.value }
                   return ''
                 },
                 fontSize: 12
@@ -158,7 +208,7 @@ export default {
               }
             }
           },
-          data: actualData,
+          data: lastmonth,
           animationDuration: 500,
           animationEasing: 'quadraticOut'
         }]

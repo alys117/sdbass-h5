@@ -1,19 +1,36 @@
 <template>
   <div class="container">
-    <div :style="{height: height+'px'}" />
+    <div class="bg" />
+    <div class="logo-container" :style="{height: height+'px'}">
+      <div class="logo-pic">
+        <img :src="require('@/assets/images/logo.png')" alt="" style="width: 189px;height: 40px">
+        <img :src="require('@/assets/images/heart.png')" alt="" style="width: 107px;height: 40px">
+      </div>
+      <div class="big-title-container">
+        <div class="big-title">
+          <div class="big-title-1">宽带使用感知满意度</div>
+          <div class="big-title-2">——“用后即评” 情况通报</div>
+        </div>
+      </div>
+      <div class="time-container">
+        <div class="parallelogram">
+          <div class="time">{{ dateRange }}</div>
+        </div>
+      </div>
+    </div>
     <div class="outer">
       <div class="trapezoid-outer">
         <div class="trapezoid-inner" />
       </div>
       <div class="content">
-        <module1 />
+        <module1 :jqmyd="jqmyd" :jqmyd_hb_rate_lastday="jqmyd_hb_rate_lastday" :jqmyd_hb_rate_premlastday="jqmyd_hb_rate_premlastday" />
         <div>
-          <bar-chart :height="'150px'" :classification="['玩游戏', '浏览图文', '看视频', '上网速度', '看互联网电视', '网络连接稳定性'].reverse()" :data="[30, 52, 200, 334, 350, 306, 220]" />
+          <bar-chart :height="'150px'" :data="barChartData" />
         </div>
         <div>
           <line-chart :height="'150px'" :chart-data="lineChartData" />
         </div>
-        <module2 />
+        <module2 :up85="up85" :down75="down75" :huanbi-up="huanbiUp" :huanbi-down="huanbiDown" />
         <div ref="tableContainer" class="table-container" :style="{marginRight: 'auto',marginLeft: 'auto',width: '95%',height: height2+'px'}">
           <el-table
             ref="table1"
@@ -23,25 +40,58 @@
             :data="tableData"
             :fit="true"
           >
-            <el-table-column prop="cityname" fixed label="地市" width="35" />
-            <el-table-column prop="name" label="宽带使用感知" width="50" />
-            <el-table-column prop="name" label="较上月环比" width="40" />
+            <el-table-column prop="city_name" fixed label="地市" width="35">
+              <template slot-scope="scope">
+                <div :style="{fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.city_name }}</div>
+              </template>
+            </el-table-column>>
+            <el-table-column prop="jqmyd" label="宽带使用感知" width="40">
+              <template slot-scope="scope">
+                <div :style="{backgroundColor: color(scope.row.sn_jqmyd),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.jqmyd }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="jqmyd_hb_rate_premlastday" label="较上月环比" width="40">
+              <template slot-scope="scope">
+                <div :style="{backgroundColor: color2(scope.row.jqmyd_hb_rate_premlastday),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.jqmyd_hb_rate_premlastday }}</div>
+              </template>
+            </el-table-column>
             <el-table-column label="宽带使用感知关键过程表现">
-              <el-table-column prop="name" label="上网速度" width="50" />
-              <el-table-column prop="col1" label="网络连接稳定性" width="50">
+              <el-table-column prop="package_fit" label="上网速度" width="40">
                 <template slot-scope="scope">
-                  <div
-                    :style="{backgroundColor: color(scope.row.sn),fontWeight: scope.row.cityname === '全省'?'bold':'normal'}"
-                  >
-                    {{ (scope.row.col1*100).toFixed(1)+'%' }}</div>
+                  <div :style="{backgroundColor: color(scope.row.sn_answer_Q1),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.answer_Q1 }}</div>
                 </template>
               </el-table-column>
-              <el-table-column prop="name" label="完游戏" width="50" />
-              <el-table-column prop="name" label="看视频" width="50" />
-              <el-table-column prop="name" label="看互联网电视" width="50" />
-              <el-table-column prop="name" label="浏览图文" width="50" />
+              <el-table-column prop="rule_clarity" label="网络连接稳定性" width="48">
+                <template slot-scope="scope">
+                  <div :style="{backgroundColor: color(scope.row.sn_answer_Q2),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.answer_Q2 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="transact_norms" label="玩游戏" width="50">
+                <template slot-scope="scope">
+                  <div :style="{backgroundColor: color(scope.row.sn_answer_A1),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.answer_A1 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="transact_handy" label="看视频" width="50">
+                <template slot-scope="scope">
+                  <div :style="{backgroundColor: color(scope.row.sn_answer_B1),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.answer_B1 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="transact_handy" label="看互联网电视" width="50">
+                <template slot-scope="scope">
+                  <div :style="{backgroundColor: color(scope.row.sn_answer_C1),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.answer_C1 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="transact_handy" label="浏览图文" width="50">
+                <template slot-scope="scope">
+                  <div :style="{backgroundColor: color(scope.row.sn_answer_D1),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.answer_D1 }}</div>
+                </template>
+              </el-table-column>
             </el-table-column>
-            <el-table-column prop="col1" label="样本量" min-width="50" />
+            <el-table-column prop="user_num" label="样本量" min-width="40">
+              <template slot-scope="scope">
+                <div :style="{fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.user_num }}</div>
+              </template>
+            </el-table-column>>
           </el-table>
         </div>
         <div :style="{height: height3+'px'}">
@@ -60,39 +110,62 @@
 </template>
 <script>
 import dayjs from 'dayjs'
-import { getList } from '@/api/sdbass'
+import { getMaxOpTime, getTableList, getTrendList, getLastMonth, getThisMonth } from '@/api/st_user_instant_evaluate_jksw_dm'
 import BarChart from '@/views/components/BarChart'
 import LineChart from '@/views/components/LineChart'
 import Module1 from '@/views/components/module1.vue'
 import Module2 from '@/views/components/module2.vue'
 export default {
-  name: 'Wq',
+  name: 'TariffSatisfaction',
   components: { BarChart, LineChart, Module1, Module2 },
   data() {
     return {
-      date: dayjs().format('M月D日'),
-      left: '68%',
-      top: '75px',
       size: '20px',
       size1: '20px',
       size2: '10px',
+      day: '',
       height: 240,
       height1: 136,
       height2: 400,
       height3: 50,
       tableData: [],
+      jqmyd: 0, // #满意度--当前表现值
+      jqmyd_hb_rate_lastday: 0, // 较昨日环比
+      jqmyd_hb_rate_premlastday: 0, //  较上月环比
+      up85: 0, // 85分以上
+      down75: 0, // 75-85分
+      huanbiUp: 0, // 环比上升
+      huanbiDown: 0, // 环比下降
+      barChartData: {
+        classification: ['玩游戏', '浏览图文', '看视频', '上网速度', '看互联网电视', '网络连接稳定性'].reverse(),
+        actualData: []
+      }, // 柱状图数据
       lineChartData: {
-        classification: ['5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7'],
-        actualData: [120, 82, 91, 154, 162, 140, 147]
+        classification: [],
+        actualData: [],
+        lastmonth: [],
+        thismonth: []
       }
     }
   },
   computed: {
+    dateRange() {
+      return dayjs(this.day).startOf('month').format('M月D日') + '-' + dayjs(this.day).format('M月D日')
+    },
     color() {
       return sn => {
-        if (sn !== 18 && sn > 14) {
-          return '#deebf7'
-        } else if (sn < 4) {
+        if (sn > 14) {
+          return '#ffc7ce'
+        } else if (sn < 4 && sn !== 0) {
+          return '#c6e0b4'
+        } else {
+          return 'rgba(0,0,0,0)'
+        }
+      }
+    },
+    color2() {
+      return sn => {
+        if (sn < 0) {
           return '#ffc7ce'
         } else {
           return 'rgba(0,0,0,0)'
@@ -100,55 +173,82 @@ export default {
       }
     }
   },
-  mounted() {
-    getList().then(res => {
-      this.tableData = res.data.items
+  async mounted() {
+    const res = await getMaxOpTime() // 获取最大时间
+    this.day = res.data[0].op_time.slice(0, 10) // 设置日期
+    const { data: thismonth } = await getThisMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取本月
+    const { data: lastmonth } = await getLastMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取上月
+    // console.log(thismonth, lastmonth)
+    const trend = await getTrendList({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取趋势
+    this.lineChartData.actualData = trend.data.map(item => item.jqmyd?.toFixed(2))
+    this.lineChartData.classification = Array.from({ length: 31 }, (_, i) => 1 + (i)) // 1-31
+    this.lineChartData.classification.forEach((item, index) => {
+      thismonth.forEach(i => {
+        if (i.op_time.slice(8, 10) === (item.toString().length === 1 ? '0' + item : item + '')) {
+          this.lineChartData.thismonth[index] = i.jqmyd?.toFixed(2)
+        }
+      })
+      this.lineChartData.thismonth[index] === undefined && (this.lineChartData.thismonth[index] = undefined)
+
+      lastmonth.forEach(i => {
+        if (i.op_time.slice(8, 10) === (item.toString().length === 1 ? '0' + item : item + '')) {
+          this.lineChartData.lastmonth[index] = i.jqmyd?.toFixed(2)
+        }
+      })
+      this.lineChartData.lastmonth[index] === undefined && (this.lineChartData.lastmonth[index] = undefined)
+    })
+    const table = await getTableList({ op_time: dayjs(this.day).add(0, 'day').format('YYYY-MM-DD') }) // 获取表格
+    this.tableData = table.data || []
+    const arr = ['jqmyd', 'jqmyd_hb_rate_premlastday', 'jqmyd_hb_rate_lastday', 'answer_A1', 'answer_B1', 'answer_C1', 'answer_D1', 'answer_Q1', 'answer_Q2']
+    arr.forEach(i => {
+      // 排序
       this.tableData.sort((a, b) => {
-        if (a.cityid === 999) {
-          return true
-        } else {
-          return a.col1 - b.col1
+        if (a.city_name === '全省') {
+          return -1
+        } else if (b.city_name === '全省') {
+          return 1
         }
+        return b[i] - a[i]
       })
-      this.tableData.map(item => {
-        item.sn = this.tableData.indexOf(item) + 1
+      // 打上序号
+      this.tableData.map((item, index) => {
+        item['sn_' + i] = index
       })
-      this.tableData.reduce(function(prev, next) {
-        if (prev.col1 === next.col1) {
-          next.sn = prev.sn
-        }
-        return next
+    })
+    this.tableData.sort((a, b) => a.sn_jqmyd - b.sn_jqmyd)
+    this.tableData.forEach(item => {
+      arr.forEach(i => {
+        item[i] = item[i]?.toFixed(2) // 保留两位小数
       })
-      this.tableData.sort(function(a, b) {
-        return a.cityid - b.cityid
-      })
-      this.$nextTick(() => {
-        // const tableHeight = this.$refs?.table1?.$el.offsetHeight
-        // console.log(tableHeight, 'axios')
-        // this.height = tableHeight * 1
-      })
+    })
+    this.jqmyd = this.tableData[0].jqmyd && parseFloat(this.tableData[0].jqmyd)
+    this.jqmyd_hb_rate_lastday = this.tableData[0].jqmyd_hb_rate_lastday && parseFloat(this.tableData[0].jqmyd_hb_rate_lastday)
+    this.jqmyd_hb_rate_premlastday = this.tableData[0].jqmyd_hb_rate_premlastday && parseFloat(this.tableData[0].jqmyd_hb_rate_premlastday)
+    this.barChartData.actualData = [
+      this.tableData[0].answer_A1,
+      this.tableData[0].answer_D1,
+      this.tableData[0].answer_B1,
+      this.tableData[0].answer_Q2,
+      this.tableData[0].answer_C1,
+      this.tableData[0].answer_Q2
+    ].reverse()
+    this.tableData.forEach(item => {
+      if (item.city_name === '全省') {
+        return
+      }
+      if (item.jqmyd > 85) {
+        this.up85++
+      } else if (item.jqmyd < 75) {
+        this.down75++
+      }
+      if (item.jqmyd_hb_rate_premlastday > 0) {
+        this.huanbiUp++
+      } else if (item.jqmyd_hb_rate_premlastday < 0) {
+        this.huanbiDown++
+      }
     })
   },
   created: function() {
-    var h = ''
-    h += ' 网页可见区域宽：' + document.body.clientWidth
-    h += ' 网页可见区域高：' + document.body.clientHeight
-    h += ' 网页可见区域宽：' + document.body.offsetWidth + ' (包括边线和滚动条的宽)'
-    h += ' 网页可见区域高：' + document.body.offsetHeight + ' (包括边线的宽)'
-    h += ' 网页正文全文宽：' + document.body.scrollWidth
-    h += ' 网页正文全文高：' + document.body.scrollHeight
-    h += ' 网页被卷去的高：' + document.body.scrollTop
-    h += ' 网页被卷去的左：' + document.body.scrollLeft
-    h += ' 网页正文部分上：' + window.screenTop
-    h += ' 网页正文部分左：' + window.screenLeft
-    h += ' 屏幕分辨率的高：' + window.screen.height
-    h += ' 屏幕分辨率的宽：' + window.screen.width
-    h += ' 屏幕可用工作区高度：' + window.screen.availHeight
-    h += ' 屏幕可用工作区宽度：' + window.screen.availWidth
-    h += ' 你的屏幕设置是 ' + window.screen.colorDepth + ' 位彩色'
-    h += ' 你的屏幕设置 ' + window.screen.deviceXDPI + ' 像素/英寸'
-    console.log(h); this.deviceInfo = h
-    this.top = document.body.clientWidth * 0.32 * 0.62 + 'px'
     this.size = document.body.clientWidth / 414 * 20 + 'px'
     this.size1 = document.body.clientWidth / 414 * 10 + 'px'
     this.size2 = document.body.clientWidth / 414 * 12 + 'px'
@@ -195,11 +295,77 @@ export default {
 </script>
 <style scoped lang="scss">
 .container {
-  /* position: relative; */
+   position: relative;
   //background: #5b9bd5 url(../../assets/images/wq-bg.jpg) no-repeat;
-  background: linear-gradient(to top right, #d4e7f6, skyblue 10px, #e6f1e0);
+  background: linear-gradient(to bottom left, #658afc, #478dff 10px, #d4e7f6);
   background-size: 100%;
   font-family: 'Microsoft YaHei',serif;
+}
+.bg{
+  position: absolute;
+  top: 80px;
+  //left: 0;
+  opacity: 0.3;
+  width: 100%;
+  height: 100vh;
+  background: url(../../assets/images/形状背景.png) no-repeat;
+  background-size: 100% 300%;
+  //z-index: 0;
+}
+.logo-container{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  .logo-pic{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 10px 0 10px;
+  }
+  .big-title-container{
+    padding: 20px 20px 10px 20px;
+    .big-title{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+      .big-title-1 {
+        color: #ecc022;
+        //font-style: italic;
+        font-weight: 700;
+        font-size: 38px;
+        text-align: center;
+        font-family: "Microsoft YaHei","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+      .big-title-2{
+        font-size: 22px;
+        font-weight: 600;
+        font-style: italic;
+        color: #fff;
+        text-align: end;
+      }
+    }
+  }
+  .time-container{
+    display: flex;
+    justify-content: center;
+    font-size: 22px;
+    line-height: 28px;
+    color: #20a0ff;
+    font-weight: 600;
+    //font-style: italic;
+    .parallelogram {
+      text-align: center;
+      width: 220px;
+      height: 28px;
+      border-radius: 5px;
+      transform: skew(20deg);
+      background: #fff;
+      .time{
+        transform: skew(-40deg);
+      }
+    }
+  }
+
 }
 .outer {
   position: relative;
@@ -211,7 +377,6 @@ export default {
   margin-left: auto;
   margin-right: auto;
 }
-
 .content {
   background-color: white;
   border-radius: 8px;
@@ -251,6 +416,7 @@ export default {
 .table-container{
   ::v-deep .el-table {
     font-size: 10px;
+    color: #000;
     //transform: scale(0.5);
     //transform-origin: 0 top;
   }

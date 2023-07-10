@@ -7,11 +7,11 @@
     <div class="right">
       <div class="right-1">
         <span class="title">【较上日环比】</span>
-        <span :class="{'data-green': jqmyd_hb_rate_lastday>0, 'data-red': !(jqmyd_hb_rate_lastday>0)}">{{ (jqmyd_hb_rate_lastday>0?'+':'') + jqmyd_hb_rate_lastday }}pp</span>
+        <span :class="{'data-green': jqmyd_hb_rate_lastday>0, 'data-red': !(jqmyd_hb_rate_lastday>0)}">{{ a }}</span>
       </div>
       <div class="right-1">
         <span class="title">【较上月环比】</span>
-        <span :class="{'data-green': jqmyd_hb_rate_premlastday>0, 'data-red': !(jqmyd_hb_rate_premlastday>0)}">{{ (jqmyd_hb_rate_premlastday>0?'+':'') + jqmyd_hb_rate_premlastday  }}pp</span>
+        <span :class="{'data-green': jqmyd_hb_rate_premlastday>0, 'data-red': !(jqmyd_hb_rate_premlastday>0)}">{{ b }}</span>
       </div>
     </div>
   </div>
@@ -33,6 +33,14 @@ export default {
       default: () => { return 0 }
     }
   },
+  computed: {
+    a: function() {
+      return (this.jqmyd_hb_rate_lastday > 0 ? '+' : '') + (this.jqmyd_hb_rate_lastday ? this.jqmyd_hb_rate_lastday.toFixed(2) : '0.00') + 'pp'
+    },
+    b: function() {
+      return (this.jqmyd_hb_rate_premlastday > 0 ? '+' : '') + (this.jqmyd_hb_rate_premlastday ? this.jqmyd_hb_rate_premlastday.toFixed(2) : '0.00') + 'pp'
+    }
+  }
 }
 </script>
 <style scoped lang="scss">

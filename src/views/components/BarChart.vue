@@ -31,14 +31,15 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      options: {}
     }
   },
   watch: {
     data: {
       deep: true,
       handler(val) {
-        console.log('data changed', val)
+        // console.log('data changed', val)
         this.initChart()
       }
     }
@@ -68,7 +69,7 @@ export default {
         grid: {
           top: 10,
           left: '5%',
-          right: '10%',
+          right: '-10%',
           bottom: '5%',
           containLabel: true
         },
@@ -135,7 +136,18 @@ export default {
           animationDuration
         }]
       }
+      this.options = options
       this.chart.setOption(options)
+      const tmp = []
+      setTimeout(() => {
+        this.options.yAxis[0].data.forEach((item, index) => {
+          tmp[index] = { name: this.options.yAxis[0].data[index], val: this.options.series[0].data[index] }
+        })
+        tmp.sort((a, b) => (b.val - a.val))
+        this.options.yAxis[0].data = tmp.map(item => item.name)
+        this.options.series[0].data = tmp.map(item => item.val)
+        this.chart.setOption(this.options)
+      }, 2000)
     }
   }
 }

@@ -78,7 +78,7 @@
   </div></template>
 <script>
 import dayjs from 'dayjs'
-import { getList } from '@/api/sdbass'
+import { getList } from '@/api/st_user_instant_evaluate_zftc_dm'
 export default {
   name: 'Wq',
   data() {

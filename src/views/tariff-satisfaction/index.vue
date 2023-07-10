@@ -30,7 +30,7 @@
         <div>
           <line-chart :height="'150px'" :chart-data="lineChartData" />
         </div>
-        <module2 :up85="up85" :down75="down75" :huanbiUp="huanbiUp" :huanbiDown="huanbiDown" />
+        <module2 :up85="up85" :down75="down75" :huanbi-up="huanbiUp" :huanbi-down="huanbiDown" />
         <div ref="tableContainer" class="table-container" :style="{marginRight: 'auto',marginLeft: 'auto',width: '95%',height: height2+'px'}">
           <el-table
             ref="table1"
@@ -58,22 +58,22 @@
             <el-table-column label="手机资费关键过程表现">
               <el-table-column prop="package_fit" label="套餐适配度" width="40">
                 <template slot-scope="scope">
-                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.package_fit }}</div>
+                  <div :style="{backgroundColor: color(scope.row.sn_package_fit),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.package_fit }}</div>
                 </template>
               </el-table-column>
               <el-table-column prop="rule_clarity" label="资费规则清晰度" width="48">
                 <template slot-scope="scope">
-                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.rule_clarity }}</div>
+                  <div :style="{backgroundColor: color(scope.row.sn_rule_clarity),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.rule_clarity }}</div>
                 </template>
               </el-table-column>
               <el-table-column prop="transact_norms" label="套餐办理规范性" width="50">
                 <template slot-scope="scope">
-                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.transact_norms }}</div>
+                  <div :style="{backgroundColor: color(scope.row.sn_transact_norms),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.transact_norms }}</div>
                 </template>
               </el-table-column>
               <el-table-column prop="transact_handy" label="套餐办理便携性" width="50">
                 <template slot-scope="scope">
-                  <div :style="{backgroundColor: color(scope.row.sn_jqmyd),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.transact_handy }}</div>
+                  <div :style="{backgroundColor: color(scope.row.sn_transact_handy),fontWeight: scope.row.city_name === '全省'?'bold':'normal'}">{{ scope.row.transact_handy }}</div>
                 </template>
               </el-table-column>
             </el-table-column>
@@ -100,7 +100,7 @@
 </template>
 <script>
 import dayjs from 'dayjs'
-import { getMaxOpTime, getTableList, getTrendList } from '@/api/sdbass'
+import { getMaxOpTime, getTableList, getTrendList, getLastMonth, getThisMonth } from '@/api/st_user_instant_evaluate_zftc_dm'
 import BarChart from '@/views/components/BarChart'
 import LineChart from '@/views/components/LineChart'
 import Module1 from '@/views/components/module1.vue'
@@ -132,13 +132,15 @@ export default {
       }, // 柱状图数据
       lineChartData: {
         classification: [],
-        actualData: []
+        actualData: [],
+        lastmonth: [],
+        thismonth: []
       }
     }
   },
   computed: {
     dateRange() {
-      return dayjs(this.day).add(-30, 'day').format('M月D日') + '-' + dayjs(this.day).format('M月D日')
+      return dayjs(this.day).startOf('month').format('M月D日') + '-' + dayjs(this.day).format('M月D日')
     },
     color() {
       return sn => {
@@ -164,19 +166,46 @@ export default {
   async mounted() {
     const res = await getMaxOpTime() // 获取最大时间
     this.day = res.data[0].op_time.slice(0, 10) // 设置日期
+    const { data: thismonth } = await getThisMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取本月
+    const { data: lastmonth } = await getLastMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取上月
+    // console.log(thismonth, lastmonth)
     const trend = await getTrendList({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取趋势
     this.lineChartData.actualData = trend.data.map(item => item.jqmyd?.toFixed(2))
-    this.lineChartData.classification = trend.data.map(item => item.op_time.slice(5, 10))
+    this.lineChartData.classification = Array.from({ length: 31 }, (_, i) => 1 + (i)) // 1-31
+    this.lineChartData.classification.forEach((item, index) => {
+      thismonth.forEach(i => {
+        if (i.op_time.slice(8, 10) === (item.toString().length === 1 ? '0' + item : item + '')) {
+          this.lineChartData.thismonth[index] = i.jqmyd?.toFixed(2)
+        }
+      })
+      this.lineChartData.thismonth[index] === undefined && (this.lineChartData.thismonth[index] = undefined)
 
+      lastmonth.forEach(i => {
+        if (i.op_time.slice(8, 10) === (item.toString().length === 1 ? '0' + item : item + '')) {
+          this.lineChartData.lastmonth[index] = i.jqmyd?.toFixed(2)
+        }
+      })
+      this.lineChartData.lastmonth[index] === undefined && (this.lineChartData.lastmonth[index] = undefined)
+    })
+    console.log(this.lineChartData, 'this.lineChartData')
+    console.log(this.lineChartData.thismonth.findIndex(i => i !== undefined), '(d)')
+    const padding = this.lineChartData.thismonth.findIndex(i => i !== undefined)
+    // 找出数组中最后一个不为undefined的元素的函数
+    function findLastIndex(arr) {
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i] !== undefined) {
+          return i
+        }
+      }
+      return -1
+    }
+    for (let i = 0; i < padding; i++) {
+      this.lineChartData.thismonth[i] = this.lineChartData.lastmonth[findLastIndex(this.lineChartData.lastmonth)]
+    }
     const table = await getTableList({ op_time: dayjs(this.day).add(0, 'day').format('YYYY-MM-DD') }) // 获取表格
     this.tableData = table.data || []
     const arr = ['jqmyd', 'jqmyd_hb_rate_premlastday', 'package_fit', 'rule_clarity', 'transact_norms', 'transact_handy', 'jqmyd_hb_rate_lastday',
       'package_price', 'billing_service']
-    this.tableData.forEach(item => {
-      arr.forEach(i => {
-        item[i] = parseFloat(item[i]?.toFixed(2)) // 保留两位小数
-      })
-    })
     arr.forEach(i => {
       // 排序
       this.tableData.sort((a, b) => {
@@ -193,6 +222,12 @@ export default {
       })
     })
     this.tableData.sort((a, b) => a.sn_jqmyd - b.sn_jqmyd)
+    this.tableData.forEach(item => {
+      arr.forEach(i => {
+        // item[i] = parseFloat(item[i]?.toFixed(2))
+        item[i] = item[i]?.toFixed(2) // 保留两位小数
+      })
+    })
 
     this.jqmyd = this.tableData[0].jqmyd && parseFloat(this.tableData[0].jqmyd)
     this.jqmyd_hb_rate_lastday = this.tableData[0].jqmyd_hb_rate_lastday && parseFloat(this.tableData[0].jqmyd_hb_rate_lastday)
@@ -270,10 +305,10 @@ export default {
       this.height1 = 124 * rate
       this.height2 = 360 * rate
     }
-    console.log(this.height, 'height')
-    console.log(this.height1, 'height1')
-    console.log(this.height2, 'height2')
-    console.log(this.height3, 'height3')
+    // console.log(this.height, 'height')
+    // console.log(this.height1, 'height1')
+    // console.log(this.height2, 'height2')
+    // console.log(this.height3, 'height3')
   },
   methods: {
     selectedRowStyle({ row, rowIndex }) {
@@ -407,6 +442,7 @@ export default {
 .table-container{
   ::v-deep .el-table {
     font-size: 10px;
+    color: #000;
     //transform: scale(0.5);
     //transform-origin: 0 top;
   }

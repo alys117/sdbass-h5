@@ -9,7 +9,7 @@
       <div class="big-title-container">
         <div class="big-title">
           <div class="big-title-1">手机资费满意度</div>
-          <div class="big-title-2">——“用后即评” 情况通报</div>
+          <div class="big-title-2">——“用后即评”情况通报</div>
         </div>
       </div>
       <div class="time-container">
@@ -23,7 +23,7 @@
         <div class="trapezoid-inner" />
       </div>
       <div class="content">
-        <module1 :jqmyd="jqmyd" :jqmyd_hb_rate_lastday="jqmyd_hb_rate_lastday" :jqmyd_hb_rate_premlastday="jqmyd_hb_rate_premlastday" />
+        <module1 :jqmyd="parseFloat(jqmyd)" :jqmyd_hb_rate_lastday="parseFloat(jqmyd_hb_rate_lastday)" :jqmyd_hb_rate_premlastday="parseFloat(jqmyd_hb_rate_premlastday)" />
         <div>
           <bar-chart :height="'150px'" :data="barChartData" />
         </div>
@@ -100,7 +100,7 @@
 </template>
 <script>
 import dayjs from 'dayjs'
-import { getMaxOpTime, getTableList, getTrendList, getLastMonth, getThisMonth } from '@/api/st_user_instant_evaluate_zftc_dm'
+import { getMaxOpTime, getTableList, getLastMonth, getThisMonth } from '@/api/st_user_instant_evaluate_zftc_dm'
 import BarChart from '@/views/components/BarChart'
 import LineChart from '@/views/components/LineChart'
 import Module1 from '@/views/components/module1.vue'
@@ -169,8 +169,8 @@ export default {
     const { data: thismonth } = await getThisMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取本月
     const { data: lastmonth } = await getLastMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取上月
     // console.log(thismonth, lastmonth)
-    const trend = await getTrendList({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取趋势
-    this.lineChartData.actualData = trend.data.map(item => item.jqmyd?.toFixed(2))
+    // const trend = await getTrendList({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取趋势
+    // this.lineChartData.actualData = trend.data.map(item => item.jqmyd?.toFixed(2))
     this.lineChartData.classification = Array.from({ length: 31 }, (_, i) => 1 + (i)) // 1-31
     this.lineChartData.classification.forEach((item, index) => {
       thismonth.forEach(i => {
@@ -200,7 +200,8 @@ export default {
       return -1
     }
     for (let i = 0; i < padding; i++) {
-      this.lineChartData.thismonth[i] = this.lineChartData.lastmonth[findLastIndex(this.lineChartData.lastmonth)]
+      console.log(findLastIndex)
+      // this.lineChartData.thismonth[i] = this.lineChartData.lastmonth[findLastIndex(this.lineChartData.lastmonth)]
     }
     const table = await getTableList({ op_time: dayjs(this.day).add(0, 'day').format('YYYY-MM-DD') }) // 获取表格
     this.tableData = table.data || []
@@ -229,7 +230,7 @@ export default {
       })
     })
 
-    this.jqmyd = this.tableData[0].jqmyd && parseFloat(this.tableData[0].jqmyd)
+    this.jqmyd = this.tableData[0].jqmyd && this.tableData[0].jqmyd
     this.jqmyd_hb_rate_lastday = this.tableData[0].jqmyd_hb_rate_lastday && parseFloat(this.tableData[0].jqmyd_hb_rate_lastday)
     this.jqmyd_hb_rate_premlastday = this.tableData[0].jqmyd_hb_rate_premlastday && parseFloat(this.tableData[0].jqmyd_hb_rate_premlastday)
     this.barChartData.actualData = [
@@ -320,144 +321,5 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.container {
-   position: relative;
-  //background: #5b9bd5 url(../../assets/images/wq-bg.jpg) no-repeat;
-  background: linear-gradient(to bottom left, #658afc, #478dff 10px, #d4e7f6);
-  background-size: 100%;
-  font-family: 'Microsoft YaHei',serif;
-}
-.bg{
-  position: absolute;
-  top: 80px;
-  //left: 0;
-  opacity: 0.3;
-  width: 100%;
-  height: 100vh;
-  background: url(../../assets/images/形状背景.png) no-repeat;
-  background-size: 100% 300%;
-  //z-index: 0;
-}
-.logo-container{
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  .logo-pic{
-    display: flex;
-    justify-content: space-between;
-    padding: 20px 10px 0 10px;
-  }
-  .big-title-container{
-    padding: 20px 20px 10px 20px;
-    .big-title{
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 10px;
-      .big-title-1 {
-        color: #ecc022;
-        //font-style: italic;
-        font-weight: 700;
-        font-size: 40px;
-        text-align: center;
-        font-family: "Microsoft YaHei","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      }
-      .big-title-2{
-        font-size: 22px;
-        font-weight: 600;
-        font-style: italic;
-        color: #fff;
-        text-align: end;
-      }
-    }
-  }
-  .time-container{
-    display: flex;
-    justify-content: center;
-    font-size: 22px;
-    line-height: 28px;
-    color: #20a0ff;
-    font-weight: 600;
-    //font-style: italic;
-    .parallelogram {
-      text-align: center;
-      width: 220px;
-      height: 28px;
-      border-radius: 5px;
-      transform: skew(20deg);
-      background: #fff;
-      .time{
-        transform: skew(-40deg);
-      }
-    }
-  }
-
-}
-.outer {
-  position: relative;
-  background-color: white;
-  border-radius: 10px;
-  //border: 1px solid #769bd4;
-  padding: 4px;
-  width: 94%;
-  margin-left: auto;
-  margin-right: auto;
-}
-.content {
-  background-color: white;
-  border-radius: 8px;
-  border: 1px solid #769bd4;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-}
-.trapezoid-outer{
-  display: flex;
-  justify-content: center;
-  height: 0;
-  transform: translateY(-4px) perspective(10px) rotateX(-3deg);
-}
-.trapezoid-inner{
-  background-color: #20a0ff;
-  position: absolute;
-  height: 6px;
-  width: 60%
-}
-.description {
-  font-size: var(--size1);
-  line-height: var(--size2);
-  color: black;
-  padding: 5px 15px;
-}
-.version{
-  text-align: center;
-  flex-direction: column;
-  display: flex;
-  font-size: 12px;
-  color: #232323;
-  font-weight: 700;
-  justify-content: end;
-  padding-bottom: 5px;
-}
-.table-container{
-  ::v-deep .el-table {
-    font-size: 10px;
-    color: #000;
-    //transform: scale(0.5);
-    //transform-origin: 0 top;
-  }
-  ::v-deep .el-table td, ::v-deep .el-table th {
-    padding: 0;
-    text-align: center;
-  }
-  ::v-deep .el-table .cell {
-    padding: 2px;
-  }
-  ::v-deep .el-table .el-table__cell {
-    padding: 2px;
-  }
-  ::v-deep .el-table .cell {
-    line-height: 12px;
-  }
-}
+@import '~@/views/components/satisfaction.scss';
 </style>

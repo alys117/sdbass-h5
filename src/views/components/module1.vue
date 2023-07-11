@@ -2,7 +2,7 @@
   <div class="mobile1-container">
     <div class="left">
       <div class="title">当前表现值</div>
-      <div><span class="number">{{ jqmyd }}</span><span class="unit">%</span></div>
+      <div><span class="number">{{ jqmyd.toFixed(2) }}</span><span class="unit">%</span></div>
     </div>
     <div class="right">
       <div class="right-1">

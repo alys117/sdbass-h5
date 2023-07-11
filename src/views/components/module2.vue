@@ -65,19 +65,23 @@ export default {
       .title{
         font-weight: 900;
         font-size: 18px;
+        font-family: "Microsoft YaHei","PingFang SC",serif;
       }
       .number-red{
         font-size: 36px;
         font-weight: 900;
         color: #d70702;
+        font-family: "Microsoft YaHei","PingFang SC",serif;
       }
       .number-green{
         font-size: 36px;
         font-weight: 900;
         color: #67b055;
+        font-family: "Microsoft YaHei","PingFang SC",serif;
       }
       .dishi{
         font-size: 14px;
+        font-family: "Microsoft YaHei","PingFang SC",serif;
       }
     }
   }

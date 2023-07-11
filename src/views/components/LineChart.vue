@@ -60,21 +60,6 @@ export default {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
-      // this.chart.setOption({
-      //   xAxis: {
-      //     type: 'category',
-      //     data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      //   },
-      //   yAxis: {
-      //     type: 'value'
-      //   },
-      //   series: [
-      //     {
-      //       data: [150, 230, 224, 218, 135, 147, 260],
-      //       type: 'line'
-      //     }
-      //   ]
-      // })
     },
     setOptions({ classification, actualData, lastmonth, thismonth } = {}) {
       this.chart.setOption({
@@ -107,15 +92,27 @@ export default {
           right: '5%',
           bottom: 20,
           top: 30,
-          containLabel: false
+          containLabel: false,
+          backgroundColor: '#fff'
         },
         tooltip: {
+          borderWidth: 0,
+          backgroundColor: 'rgba(50,50,50,0.5)', // 提示背景颜色，默认为透明度为0.7的黑色
+          textStyle: {
+            color: '#FFF'
+          },
           trigger: 'axis',
           axisPointer: {
             type: 'cross'
           },
           padding: [5, 10]
         },
+        // 区域缩放控制器
+        // dataZoom: {
+        //   dataBackgroundColor: '#efefff', // 数据背景颜色
+        //   fillerColor: 'rgba(182,162,222,0.2)', // 填充颜色
+        //   handleColor: '#008acd' // 手柄颜色
+        // },
         yAxis: {
           type: 'value',
           min: function(value) {
@@ -136,6 +133,9 @@ export default {
           },
           splitLine: {
             show: false // 不显示网格线
+          },
+          splitArea: {
+            show: false // 不显示分隔区域
           }
         },
         legend: {
@@ -145,6 +145,8 @@ export default {
           name: '当月',
           smooth: false, // 平滑曲线
           type: 'line',
+          // symbol: 'circle', // 设定为实心点
+          symbolSize: 2, // 设定实心点的大小
           itemStyle: {
             normal: {
               label: {
@@ -180,6 +182,8 @@ export default {
           name: '上月',
           smooth: false, // 平滑曲线
           type: 'line',
+          // symbol: 'circle', // 设定为实心点
+          symbolSize: 2, // 设定实心点的大小
           itemStyle: {
             normal: {
               label: {

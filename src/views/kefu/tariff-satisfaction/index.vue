@@ -19,6 +19,9 @@
       </div>
     </div>
     <div class="outer">
+      <div class="riqi">
+        <div class="inner">{{ dateRange }}</div>
+      </div>
       <div class="trapezoid-outer">
         <div class="trapezoid-inner" />
       </div>
@@ -87,7 +90,7 @@
         <div :style="{height: height3+'px'}">
           <div class="description" :style="{ '--size1': size1, '--size2': size2 }">
             <p>
-              数据来源：省内用后即评宽带上网满意度调研数据
+              {{ description }}
             </p>
           </div>
         </div>
@@ -135,7 +138,8 @@ export default {
         actualData: [],
         lastmonth: [],
         thismonth: []
-      }
+      },
+      description: '数据来源：省内用后即评手机资费满意度调研数据'
     }
   },
   computed: {
@@ -191,16 +195,8 @@ export default {
     console.log(this.lineChartData.thismonth.findIndex(i => i !== undefined), '(d)')
     const padding = this.lineChartData.thismonth.findIndex(i => i !== undefined)
     // 找出数组中最后一个不为undefined的元素的函数
-    function findLastIndex(arr) {
-      for (let i = arr.length - 1; i >= 0; i--) {
-        if (arr[i] !== undefined) {
-          return i
-        }
-      }
-      return -1
-    }
     for (let i = 0; i < padding; i++) {
-      console.log(findLastIndex)
+      // console.log(this.findLastIndex)
       // this.lineChartData.thismonth[i] = this.lineChartData.lastmonth[findLastIndex(this.lineChartData.lastmonth)]
     }
     const table = await getTableList({ op_time: dayjs(this.day).add(0, 'day').format('YYYY-MM-DD') }) // 获取表格
@@ -316,10 +312,22 @@ export default {
       if (row.cityid === 999) {
         return { 'font-weight': '700' }
       }
+    },
+    findLastIndex(arr) {
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i] !== undefined) {
+          return i
+        }
+      }
+      return -1
     }
   }
 }
 </script>
 <style scoped lang="scss">
 @import '~@/views/components/satisfaction.scss';
+.bg{
+  background: url(~@/assets/images/zf-1.png) no-repeat;
+  background-size: 100%;
+}
 </style>

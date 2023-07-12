@@ -46,8 +46,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/example/tariff-satisfaction',
-    // redirect: '/dashboard',
+    redirect: '/dashboard',
     children: [{
       path: 'dashboard',
       name: 'Dashboard',
@@ -66,13 +65,13 @@ export const constantRoutes = [
       {
         path: 'broadband-satisfaction',
         name: 'BroadbandSatisfaction',
-        component: () => import('@/views/broadband-satisfaction/index'),
+        component: () => import('@/views/kefu/broadband-satisfaction/index'),
         meta: { title: '宽带满意度', icon: 'table' }
       },
       {
         path: 'tariff-satisfaction',
         name: 'TariffSatisfaction',
-        component: () => import('@/views/tariff-satisfaction/index'),
+        component: () => import('@/views/kefu/tariff-satisfaction/index'),
         meta: { title: '资费满意度', icon: 'table' }
       },
       {

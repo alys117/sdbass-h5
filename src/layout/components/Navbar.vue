@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar">
+  <div class="navbar" :style="{height: sidebar.naviBarHeight + 'px'}">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb class="breadcrumb-container" />
@@ -61,7 +61,6 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-  height: 0px;
   overflow: hidden;
   position: relative;
   background: #fff;

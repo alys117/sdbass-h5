@@ -3,7 +3,8 @@ import Cookies from 'js-cookie'
 const state = {
   sidebar: {
     opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
-    withoutAnimation: false
+    withoutAnimation: false,
+    naviBarHeight: 0
   },
   device: 'desktop'
 }
@@ -25,6 +26,9 @@ const mutations = {
   },
   TOGGLE_DEVICE: (state, device) => {
     state.device = device
+  },
+  TOGGLE_HEAD: state => {
+    state.sidebar.naviBarHeight = state.sidebar.naviBarHeight ? 0 : 50
   }
 }
 
@@ -37,6 +41,9 @@ const actions = {
   },
   toggleDevice({ commit }, device) {
     commit('TOGGLE_DEVICE', device)
+  },
+  toggleHead({ commit }) {
+    commit('TOGGLE_HEAD')
   }
 }
 

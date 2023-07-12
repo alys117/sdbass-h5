@@ -43,14 +43,13 @@ export default {
       type: Number,
       default: () => { return 0 }
     }
-  },
+  }
 }
 </script>
 <style scoped lang="scss">
 .module2-container{
   padding: 10px;
   padding-top: 20px;
-  font-family: "Microsoft YaHei","PingFang SC",serif;
   display: flex;
   .module2{
     flex: 1;
@@ -65,23 +64,23 @@ export default {
       .title{
         font-weight: 900;
         font-size: 18px;
-        font-family: "Microsoft YaHei","PingFang SC",serif;
+        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       }
       .number-red{
         font-size: 36px;
         font-weight: 900;
         color: #d70702;
-        font-family: "Microsoft YaHei","PingFang SC",serif;
+        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       }
       .number-green{
         font-size: 36px;
         font-weight: 900;
         color: #67b055;
-        font-family: "Microsoft YaHei","PingFang SC",serif;
+        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       }
       .dishi{
         font-size: 14px;
-        font-family: "Microsoft YaHei","PingFang SC",serif;
+        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       }
     }
   }

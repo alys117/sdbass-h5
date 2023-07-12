@@ -35,17 +35,17 @@ export default {
   },
   computed: {
     a: function() {
-      return (this.jqmyd_hb_rate_lastday > 0 ? '+' : '') + (this.jqmyd_hb_rate_lastday ? this.jqmyd_hb_rate_lastday.toFixed(2) : '0.00') + 'pp'
+      return (this.jqmyd_hb_rate_lastday >= 0 ? '+' : '') + (this.jqmyd_hb_rate_lastday ? this.jqmyd_hb_rate_lastday.toFixed(2) : '0.00') + 'pp'
     },
     b: function() {
-      return (this.jqmyd_hb_rate_premlastday > 0 ? '+' : '') + (this.jqmyd_hb_rate_premlastday ? this.jqmyd_hb_rate_premlastday.toFixed(2) : '0.00') + 'pp'
+      return (this.jqmyd_hb_rate_premlastday >= 0 ? '+' : '') + (this.jqmyd_hb_rate_premlastday ? this.jqmyd_hb_rate_premlastday.toFixed(2) : '0.00') + 'pp'
     }
   }
 }
 </script>
 <style scoped lang="scss">
 .mobile1-container{
-  font-family: "Microsoft YaHei","PingFang SC",serif;
+  font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
   display: flex;
   justify-content: center;
   padding: 10px;
@@ -57,17 +57,18 @@ export default {
     flex: 3;
     gap: 5px;
     .title{
-      //font-family: "PingFang SC","Microsoft YaHei",serif;
+      font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 16px;
       font-weight: 900;
     }
     .number{
       color: #769bd4;
-      //font-family: "Tw Cen MT Condensed Extra Bold";
+      font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 30px;
       font-weight: 900;
     }
     .unit{
+      font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 30px;
       font-weight: 900;
     }
@@ -84,16 +85,18 @@ export default {
       display: flex;
       justify-content: flex-start;
       .title{
-        //font-family: "Microsoft YaHei","PingFang SC",serif;
+        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 16px;
         font-weight: 900;
       }
       .data-green{
+        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
         color: #67b055;
         font-size: 16px;
         font-weight: 900;
       }
       .data-red{
+        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
         color: red;
         font-size: 16px;
         font-weight: 900;

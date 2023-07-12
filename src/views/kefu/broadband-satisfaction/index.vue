@@ -19,6 +19,9 @@
       </div>
     </div>
     <div class="outer">
+      <div class="riqi">
+        <div class="inner">{{ dateRange }}</div>
+      </div>
       <div class="trapezoid-outer">
         <div class="trapezoid-inner" />
       </div>
@@ -97,7 +100,7 @@
         <div :style="{height: height3+'px'}">
           <div class="description" :style="{ '--size1': size1, '--size2': size2 }">
             <p>
-              数据来源：省内用后即评宽带上网满意度调研数据
+              {{ description }}
             </p>
           </div>
         </div>
@@ -145,7 +148,8 @@ export default {
         actualData: [],
         lastmonth: [],
         thismonth: []
-      }
+      },
+      description: '数据来源：省内用后即评宽带上网满意度调研数据'
     }
   },
   computed: {
@@ -295,6 +299,9 @@ export default {
 </script>
 <style scoped lang="scss">
 @import '@/views/components/satisfaction.scss';
-
+.bg{
+  background: url(~@/assets/images/kd-1.png) no-repeat;
+  background-size: 100%;
+}
 </style>
 

@@ -2,19 +2,29 @@
   position: relative;
   //background: #5b9bd5 url(../../assets/images/wq-bg.jpg) no-repeat;
   background: linear-gradient(to bottom left, #658afc, #478dff 10px, #d4e7f6);
+  //background: #658afc;
   background-size: 100%;
   font-family: 'Microsoft YaHei',serif;
 }
 .bg{
   position: absolute;
-  top: 80px;
-  //left: 0;
-  opacity: 0.3;
+  top: 25px;
   width: 100%;
   height: 100vh;
-  background: url(../../assets/images/lights.png) no-repeat;
-  background-size: 100% 300%;
-  //z-index: 0;
+  //background: url(../../assets/images/tariff-bg.png) no-repeat;
+  //background-size: 100%;
+  z-index: 0;
+  .time1 {
+    position: relative;
+    display: flex;
+    top: 10%;
+    color: #20a0ff;
+    text-align: center;
+    transform: skew(-30deg);
+    font-size: 20px;
+    font-weight: 900;
+    font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
 }
 .logo-container{
   position: relative;
@@ -26,8 +36,9 @@
     padding: 20px 10px 0 10px;
   }
   .big-title-container{
+    display: none;
     padding: 20px 20px 10px 20px;
-    font-family: "Microsoft YaHei","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     .big-title{
       display: flex;
       flex-direction: column;
@@ -39,7 +50,7 @@
         font-weight: 700;
         font-size: 34px;
         text-align: center;
-        font-family: "Microsoft YaHei","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       }
       .big-title-2{
         font-size: 20px;
@@ -51,8 +62,9 @@
     }
   }
   .time-container{
-    font-family: "Microsoft YaHei","pingfang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     display: flex;
+    display: none;
     justify-content: center;
     font-size: 20px;
     line-height: 28px;
@@ -67,8 +79,8 @@
       transform: skew(20deg);
       background: #fff;
       .time{
-        transform: skew(-40deg);
-        font-family: "Microsoft YaHei","pingfang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        transform: skew(-30deg);
+        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
       }
     }
   }
@@ -92,6 +104,27 @@
   margin-left: auto;
   margin-right: auto;
 }
+.riqi{
+  display: flex;
+  justify-content: center;
+  height: 0;
+  transform: translateY(-60px);
+  .inner{
+    font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align: center;
+    font-weight: 900;
+    font-size: 20px;
+    line-height: 38px;
+    font-style: italic;
+    background: url("~@/assets/images/date-bg.png");
+    background-size: 100% 100%;
+    //transform: skew(-30deg);
+    color: #20a0ff;
+    position: absolute;
+    height: 35px;
+    width: 50%
+  }
+}
 .trapezoid-outer{
   display: flex;
   justify-content: center;
@@ -111,7 +144,7 @@
   padding: 5px 15px;
 }
 .version{
-  font-family: "Microsoft YaHei","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-align: center;
   flex-direction: column;
   display: flex;
@@ -123,7 +156,7 @@
 }
 .table-container{
   ::v-deep .el-table {
-    font-family: "Microsoft YaHei","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10px;
     color: #000;
     //transform: scale(0.5);

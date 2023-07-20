@@ -1,5 +1,12 @@
 <template>
-  <div class="container">
+  <div
+    ref="imageTofile"
+    v-loading="loading"
+    element-loading-text="加载中......"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.5)"
+    class="container"
+  >
     <div class="bg" />
     <div class="logo-container" :style="{height: height+'px'}">
       <div class="logo-pic">
@@ -113,10 +120,11 @@ export default {
   components: { BarChart, LineChart, Module1, Module2 },
   data() {
     return {
+      loading: true,
       size: '20px',
       size1: '20px',
       size2: '10px',
-      day: '',
+      day: '1970-01-01',
       height: 240,
       height1: 136,
       height2: 400,
@@ -144,6 +152,9 @@ export default {
   },
   computed: {
     dateRange() {
+      if (this.day === '1970-01-01') {
+        return 'M月D日-M月D日'
+      }
       return dayjs(this.day).startOf('month').format('M月D日') + '-' + dayjs(this.day).format('M月D日')
     },
     color() {
@@ -170,9 +181,13 @@ export default {
   async mounted() {
     const res = await getMaxOpTime() // 获取最大时间
     this.day = res.data[0].op_time.slice(0, 10) // 设置日期
-    const { data: thismonth } = await getThisMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取本月
-    const { data: lastmonth } = await getLastMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取上月
-    // console.log(thismonth, lastmonth)
+    const [{ data: thismonth }, { data: lastmonth }, { data: tableData }] = await Promise.all(
+      [getThisMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }),
+        getLastMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }),
+        getTableList({ op_time: dayjs(this.day).add(0, 'day').format('YYYY-MM-DD') })
+      ])
+
+    // 下面是柱状图数据和折线图数据
     // const trend = await getTrendList({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取趋势
     // this.lineChartData.actualData = trend.data.map(item => item.jqmyd?.toFixed(2))
     this.lineChartData.classification = Array.from({ length: 31 }, (_, i) => 1 + (i)) // 1-31
@@ -199,8 +214,8 @@ export default {
       // console.log(this.findLastIndex)
       // this.lineChartData.thismonth[i] = this.lineChartData.lastmonth[findLastIndex(this.lineChartData.lastmonth)]
     }
-    const table = await getTableList({ op_time: dayjs(this.day).add(0, 'day').format('YYYY-MM-DD') }) // 获取表格
-    this.tableData = table.data || []
+    // 下面是表格数据的处理
+    this.tableData = tableData || []
     const arr = ['jqmyd', 'jqmyd_hb_rate_premlastday', 'package_fit', 'rule_clarity', 'transact_norms', 'transact_handy', 'jqmyd_hb_rate_lastday',
       'package_price', 'billing_service']
     arr.forEach(i => {
@@ -252,6 +267,8 @@ export default {
         this.huanbiDown++
       }
     })
+
+    this.loading = false
   },
   created: function() {
     var h = ''

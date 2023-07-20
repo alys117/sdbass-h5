@@ -1,5 +1,12 @@
 <template>
-  <div class="container">
+  <div
+    ref="imageTofile"
+    v-loading="loading"
+    element-loading-text="加载中......"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.5)"
+    class="container"
+  >
     <div class="bg" />
     <div class="logo-container" :style="{height: height+'px'}">
       <div class="logo-pic">
@@ -106,27 +113,29 @@
         </div>
       </div>
     </div>
-    <div :style="{height: height3 + 'px'}" class="version">
+    <div :style="{height: height3 + 'px'}" class="version" @click="screenImage">
       中国移动山东公司客服部（V1.0版)
     </div>
   </div>
 </template>
 <script>
 import dayjs from 'dayjs'
-import { getMaxOpTime, getTableList, getTrendList, getLastMonth, getThisMonth } from '@/api/st_user_instant_evaluate_jksw_dm'
+import { getMaxOpTime, getTableList, getLastMonth, getThisMonth } from '@/api/st_user_instant_evaluate_jksw_dm'
 import BarChart from '@/views/components/BarChart'
 import LineChart from '@/views/components/LineChart'
 import Module1 from '@/views/components/module1.vue'
 import Module2 from '@/views/components/module2.vue'
+import html2canvas from 'html2canvas'
 export default {
   name: 'TariffSatisfaction',
   components: { BarChart, LineChart, Module1, Module2 },
   data() {
     return {
+      loading: true,
       size: '20px',
       size1: '20px',
       size2: '10px',
-      day: '',
+      day: '1970-01-01',
       height: 240,
       height1: 136,
       height2: 400,
@@ -154,6 +163,9 @@ export default {
   },
   computed: {
     dateRange() {
+      if (this.day === '1970-01-01') {
+        return 'M月D日-M月D日'
+      }
       return dayjs(this.day).startOf('month').format('M月D日') + '-' + dayjs(this.day).format('M月D日')
     },
     color() {
@@ -178,28 +190,38 @@ export default {
     }
   },
   async mounted() {
+    const aaa = await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('ok')
+      }, 2000)
+    })
+    console.log(aaa)
     const res = await getMaxOpTime() // 获取最大时间
     this.day = res.data[0].op_time.slice(0, 10) // 设置日期
-    const { data: thismonth } = await getThisMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取本月
-    const { data: lastmonth } = await getLastMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取上月
-    // console.log(thismonth, lastmonth)
-    // const trend = await getTrendList({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取趋势
-    // this.lineChartData.actualData = trend.data.map(item => item.jqmyd?.toFixed(2))
-    this.lineChartData.classification = Array.from({ length: 31 }, (_, i) => 1 + (i)) // 1-31
-    this.lineChartData.classification.forEach((item, index) => {
-      thismonth.forEach(i => {
-        if (i.op_time.slice(8, 10) === (item.toString().length === 1 ? '0' + item : item + '')) {
-          this.lineChartData.thismonth[index] = i.jqmyd?.toFixed(2)
-        }
-      })
-      this.lineChartData.thismonth[index] === undefined && (this.lineChartData.thismonth[index] = undefined)
 
-      lastmonth.forEach(i => {
-        if (i.op_time.slice(8, 10) === (item.toString().length === 1 ? '0' + item : item + '')) {
-          this.lineChartData.lastmonth[index] = i.jqmyd?.toFixed(2)
-        }
+    Promise.all([getThisMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') }),
+      getLastMonth({ op_time: dayjs(this.day).format('YYYY-MM-DD') })]).then(res => {
+      const [{ data: thismonth }, { data: lastmonth }] = res
+      // const trend = await getTrendList({ op_time: dayjs(this.day).format('YYYY-MM-DD') }) // 获取趋势
+      // this.lineChartData.actualData = trend.data.map(item => item.jqmyd?.toFixed(2))
+      this.lineChartData.classification = Array.from({ length: 31 }, (_, i) => 1 + (i)) // 1-31
+      this.lineChartData.classification.forEach((item, index) => {
+        thismonth.forEach(i => {
+          if (i.op_time.slice(8, 10) === (item.toString().length === 1 ? '0' + item : item + '')) {
+            this.lineChartData.thismonth[index] = i.jqmyd?.toFixed(2)
+          }
+        })
+        this.lineChartData.thismonth[index] === undefined && (this.lineChartData.thismonth[index] = undefined)
+
+        lastmonth.forEach(i => {
+          if (i.op_time.slice(8, 10) === (item.toString().length === 1 ? '0' + item : item + '')) {
+            this.lineChartData.lastmonth[index] = i.jqmyd?.toFixed(2)
+          }
+        })
+        this.lineChartData.lastmonth[index] === undefined && (this.lineChartData.lastmonth[index] = undefined)
       })
-      this.lineChartData.lastmonth[index] === undefined && (this.lineChartData.lastmonth[index] = undefined)
+
+      this.loading = false
     })
     const table = await getTableList({ op_time: dayjs(this.day).add(0, 'day').format('YYYY-MM-DD') }) // 获取表格
     this.tableData = table.data || []
@@ -292,6 +314,42 @@ export default {
     selectedRowStyle({ row, rowIndex }) {
       if (row.cityid === 999) {
         return { 'font-weight': '700' }
+      }
+    },
+    // 页面元素转图片
+    screenImage() {
+      // 手动创建一个 canvas 标签
+      const canvas = document.createElement('canvas')
+      // 获取父标签，意思是这个标签内的 DOM 元素生成图片
+      // imageTofile是给截图范围内的父级元素自定义的ref名称
+      const canvasBox = this.$refs.imageTofile
+      // 获取父级的宽高
+      const width = parseInt(window.getComputedStyle(canvasBox).width)
+      const height = parseInt(window.getComputedStyle(canvasBox).height)
+      // 宽高 * 2 并放大 2 倍 是为了防止图片模糊
+      canvas.width = width * 2
+      canvas.height = height * 2
+      canvas.style.width = width + 'px'
+      canvas.style.height = height + 'px'
+      const context = canvas.getContext('2d')
+      context.scale(1, 1)
+      const options = {
+        backgroundColor: null,
+        canvas: canvas,
+        useCORS: true
+      }
+      html2canvas(canvasBox, options).then((canvas) => {
+        // toDataURL 图片格式转成 base64
+        const dataURL = canvas.toDataURL('image/png')
+        // console.log(dataURL)
+        downloadImage(dataURL)
+      })
+      const downloadImage = (url) => {
+        // 如果是在网页中可以直接创建一个 a 标签直接下载
+        const a = document.createElement('a')
+        a.href = url
+        a.download = '截图'
+        a.click()
       }
     }
   }

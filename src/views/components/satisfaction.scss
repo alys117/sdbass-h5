@@ -5,15 +5,17 @@
   //background: #658afc;
   background-size: 100%;
   font-family: 'Microsoft YaHei',serif;
+  z-index: 0;
 }
+
 .bg{
   position: absolute;
   top: 25px;
   width: 100%;
   height: 100vh;
-  //background: url(../../assets/images/tariff-bg.png) no-repeat;
-  //background-size: 100%;
-  z-index: 0;
+  background: url(~@/assets/images/lights.png) no-repeat;
+  background-size: 100%;
+  z-index: -2;
   .time1 {
     position: relative;
     display: flex;
@@ -36,33 +38,45 @@
     padding: 20px 10px 0 10px;
   }
   .big-title-container{
-    display: none;
+    //display: none;
     padding: 20px 20px 10px 20px;
-    font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "YOUSHEBIAOTIHEI-2","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     .big-title{
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 1px;
       padding: 10px;
       .big-title-1 {
-        color: #ecc022;
-        //font-style: italic;
-        font-weight: 700;
-        font-size: 34px;
+        position: relative;
+        color: #ffdd54;
+        font-size: var(--size);
         text-align: center;
-        font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        &::before{
+          position: absolute;
+          content: attr(before-content);
+          transform: translate(4px,4px);
+          color: var(--color);
+          z-index: -1;
+        }
       }
       .big-title-2{
-        font-size: 20px;
-        font-weight: 600;
-        font-style: italic;
+        position: relative;
+        font-size: var(--size);
+        //font-style: italic;
         color: #fff;
         text-align: end;
+        &::before{
+          position: absolute;
+          content: attr(before-content-sub);
+          transform: translate(4px,4px);
+          color: var(--color);
+          z-index: -1;
+        }
       }
     }
   }
   .time-container{
-    font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "YOUSHEBIAOTIHEI-2","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     display: flex;
     display: none;
     justify-content: center;
@@ -110,12 +124,10 @@
   height: 0;
   transform: translateY(-60px);
   .inner{
-    font-family: "monospace","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "YOUSHEBIAOTIHEI-2","Microsoft YaHei","PingFang SC","Droid Sans Fallback","SimHei","PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-align: center;
-    font-weight: 900;
-    font-size: 20px;
-    line-height: 38px;
-    font-style: italic;
+    font-size: 22px;
+    line-height: 40px;
     background: url("~@/assets/images/date-bg.png");
     background-size: 100% 100%;
     //transform: skew(-30deg);
@@ -137,6 +149,30 @@
   height: 6px;
   width: 60%
 }
+
+.trapezoid-outer1{
+  display: flex;
+  justify-content: center;
+  height: 0;
+  transform: translateY(-4px) perspective(15px) rotateX(-2deg);
+}
+.trapezoid-inner1{
+  background-color: #20a0ffee;
+  position: absolute;
+  height: 36px;
+  width: 55%;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.trapezoid-inner1-text{
+  text-align: center;
+  color: white;
+  font-size: 20px;
+  line-height: 35px;
+  font-weight: 900;
+  transform: perspective(15px) rotateX(2deg);
+}
+
 .description {
   font-size: var(--size1);
   line-height: var(--size2);

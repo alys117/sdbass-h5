@@ -15,8 +15,8 @@
       </div>
       <div class="big-title-container">
         <div class="big-title">
-          <div class="big-title-1">手机资费满意度</div>
-          <div class="big-title-2">——“用后即评”情况通报</div>
+          <div class="big-title-1" :before-content="content" :style="{'--color': shadowColor, '--size': titleSize}">手机资费满意度</div>
+          <div class="big-title-2" :before-content-sub="subcontent" :style="{'--color': shadowColor, '--size': titleSize2}">——“用后即评”情况通报</div>
         </div>
       </div>
       <div class="time-container">
@@ -115,15 +115,21 @@ import BarChart from '@/views/components/BarChart'
 import LineChart from '@/views/components/LineChart'
 import Module1 from '@/views/components/module1.vue'
 import Module2 from '@/views/components/module2.vue'
+import '@/assets/fonts/YOUSHEBIAOTIHEI-2-embed.css'
 export default {
   name: 'TariffSatisfaction',
   components: { BarChart, LineChart, Module1, Module2 },
   data() {
     return {
+      content: '手机资费满意度',
+      subcontent: '——“用后即评”情况通报',
+      shadowColor: '#3C88FD',
       loading: true,
       size: '20px',
       size1: '20px',
       size2: '10px',
+      titleSize: '42px',
+      titleSize2: '28px',
       day: '1970-01-01',
       height: 240,
       height1: 136,
@@ -302,6 +308,8 @@ export default {
       this.height1 = 135
       this.height2 = 346 // s20 ultra
     } else if (document.body.clientWidth === 375) {
+      this.titleSize = '38px'
+      this.titleSize2 = '24px'
       this.height = 222
       this.height1 = 124
       this.height2 = 345 // iphone 6 7 8 se2
@@ -310,6 +318,8 @@ export default {
       this.height1 = 140
       this.height2 = 348 // iphone 12/13 pro max
     } else if (document.body.clientWidth === 390) {
+      this.titleSize = '38px'
+      this.titleSize2 = '24px'
       this.height = 234
       this.height1 = 128
       this.height2 = 345 // iphone 12/13 pro
@@ -343,8 +353,4 @@ export default {
 </script>
 <style scoped lang="scss">
 @import '~@/views/components/satisfaction.scss';
-.bg{
-  background: url(~@/assets/images/zf-1.png) no-repeat;
-  background-size: 100%;
-}
 </style>

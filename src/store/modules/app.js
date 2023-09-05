@@ -27,8 +27,8 @@ const mutations = {
   TOGGLE_DEVICE: (state, device) => {
     state.device = device
   },
-  TOGGLE_HEAD: state => {
-    state.sidebar.naviBarHeight = state.sidebar.naviBarHeight ? 0 : 50
+  TOGGLE_HEAD: (state, h) => {
+    state.sidebar.naviBarHeight = h
   }
 }
 
@@ -42,8 +42,8 @@ const actions = {
   toggleDevice({ commit }, device) {
     commit('TOGGLE_DEVICE', device)
   },
-  toggleHead({ commit }) {
-    commit('TOGGLE_HEAD')
+  toggleHead({ commit }, height) {
+    commit('TOGGLE_HEAD', height)
   }
 }
 

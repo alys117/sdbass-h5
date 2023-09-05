@@ -63,16 +63,22 @@ export const constantRoutes = [
     meta: { title: 'Example', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'broadband-satisfaction',
-        name: 'BroadbandSatisfaction',
-        component: () => import('@/views/kefu/broadband-satisfaction/index'),
-        meta: { title: '宽带满意度', icon: 'table' }
-      },
-      {
         path: 'tariff-satisfaction',
         name: 'TariffSatisfaction',
         component: () => import('@/views/kefu/tariff-satisfaction/index'),
-        meta: { title: '资费满意度', icon: 'table' }
+        meta: { title: '手机资费满意度', icon: 'table' }
+      },
+      {
+        path: 'broadband-satisfaction',
+        name: 'BroadbandSatisfaction',
+        component: () => import('@/views/kefu/broadband-satisfaction/index'),
+        meta: { title: '宽带使用感知满意度', icon: 'table' }
+      },
+      {
+        path: 'wireless-satisfaction',
+        name: 'WirelessSatisfaction',
+        component: () => import('@/views/kefu/wireless-satisfaction/index'),
+        meta: { title: '无线网络感知满意度', icon: 'table' }
       },
       {
         path: 'wq',
@@ -84,7 +90,7 @@ export const constantRoutes = [
       {
         path: 'table',
         name: 'Table',
-        hidden: true,
+        // hidden: true,
         component: () => import('@/views/table/index'),
         meta: { title: 'Table', icon: 'table' }
       },

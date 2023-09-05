@@ -17,17 +17,14 @@ export default {
     ])
   },
   created() {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Dashboard created', location, this.$route)
-      console.log('process.env.NODE_ENV', process.env.NODE_ENV)
-      this.$store.dispatch('app/toggleHead')
-    }
     console.log('getQueryObject', getQueryObject(location.search))
     const query = getQueryObject(location.search)
     if (query.page === 'tariff') {
       this.$router.push('/example/tariff-satisfaction')
     } else if (query.page === 'broadband') {
       this.$router.push('/example/broadband-satisfaction')
+    } else if (query.page === 'wireless') {
+      this.$router.push('/example/wireless-satisfaction')
     } else {
       this.$router.push('/example/tariff-satisfaction')
     }

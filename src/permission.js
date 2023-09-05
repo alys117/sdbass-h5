@@ -62,4 +62,8 @@ router.beforeEach(async(to, from, next) => {
 router.afterEach(() => {
   // finish progress bar
   NProgress.done()
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('router.afterEach', location, 'process.env.NODE_ENV', process.env.NODE_ENV)
+    store.dispatch('app/toggleHead', 50)
+  }
 })

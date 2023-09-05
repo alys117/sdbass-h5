@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'vue Admin Template' // page title
+const name = defaultSettings.title || 'sdbass-h5' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -25,7 +25,7 @@ module.exports = {
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
   // publicPath: '/',
-  publicPath: process.env.NODE_ENV === 'development' ? '/' : '/webroot/widgets/apps',
+  publicPath: process.env.NODE_ENV === 'development' ? '/' : '/WebReport/widgets/apps',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -45,6 +45,13 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           '^/dev-api/webroot': '/webroot'
+        }
+      },
+      '/test-api': {
+        target: 'http://192.195.19.27:8080',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/test-api/WebReport': '/WebReport'
         }
       }
     }

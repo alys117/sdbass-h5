@@ -38,16 +38,14 @@ export default {
   watch: {
     data: {
       deep: true,
-      handler(val) {
-        // console.log('data changed', val)
-        this.initChart()
+      handler(val, oldVal) {
+        console.log('data changed', val, oldVal)
+        if (val.classification) this.initChart()
       }
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
+    // this.initChart()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -58,6 +56,7 @@ export default {
   },
   methods: {
     initChart() {
+      if (this.chart) this.chart.dispose()
       this.chart = echarts.init(this.$el, 'macarons')
       const options = {
         tooltip: {
@@ -94,10 +93,11 @@ export default {
         xAxis: [{
           type: 'value',
           min: function(value) {
-            return value.min - 10
+            return value.min < 10 ? 0 : value.min - 10
           },
           max: function(value) {
-            return value.max + 10
+            if (value.max - value.min > 90) return 150
+            return value.max - value.min < 10 ? value.max + 10 : value.max + 30
           },
           show: false, // 不显示坐标轴线、坐标轴刻度线和坐标轴上的文字
           axisTick: {

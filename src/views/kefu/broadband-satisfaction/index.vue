@@ -301,10 +301,10 @@ export default {
       this.height = 222
       this.height1 = 124
       this.height2 = 345 // iphone 6 7 8 se2
-    } else if (document.body.clientWidth === 428) {
+    } else if ([428, 430].includes(document.body.clientWidth)) {
       this.height = 254
       this.height1 = 140
-      this.height2 = 348 // iphone 12/13 pro max
+      this.height2 = 348 // iphone 12/13/14 pro max
     } else if (document.body.clientWidth === 390) {
       this.titleSize = '38px'
       this.titleSize2 = '24px'
@@ -313,7 +313,9 @@ export default {
       this.height2 = 345 // iphone 12/13 pro
     } else {
       const rate = document.body.clientWidth / 375
-      this.height = 222 * rate
+      this.titleSize = 38 * rate + 'px'
+      this.titleSize2 = 24 * rate + 'px'
+      this.height = 234
       this.height1 = 124 * rate
       this.height2 = 360 * rate
     }

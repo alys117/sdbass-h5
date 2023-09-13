@@ -116,7 +116,6 @@ export default {
         yAxis: {
           type: 'value',
           min: function(value) {
-            console.log(value)
             return value.min - 1
           },
           max: function(value) {

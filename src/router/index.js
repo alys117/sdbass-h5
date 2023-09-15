@@ -105,6 +105,27 @@ export const constantRoutes = [
   },
 
   {
+    path: '/amap',
+    component: Layout,
+    hidden: false,
+    meta: { title: 'Amap', icon: 'el-icon-map-location' },
+    children: [
+      {
+        path: 'index',
+        name: 'Amap',
+        component: () => import('@/views/amap/index'),
+        meta: { title: 'app1', icon: 'el-icon-map-location' }
+      },
+      {
+        path: 'test/index',
+        name: 'Overlay',
+        component: () => import('@/views/amap/overlay/index'),
+        meta: { title: 'overlay', icon: 'el-icon-map-location' }
+      }
+    ]
+  },
+
+  {
     path: '/form',
     component: Layout,
     hidden: true,

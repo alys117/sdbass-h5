@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div v-if="false" class="dashboard-text">name: {{ name }}</div>
-    <div v-if="false" class="dashboard-text">中国移动，沟通从“心”开始</div>
+    <div v-if="true" class="dashboard-text">中国移动，沟通从“心”开始</div>
   </div>
 </template>
 
@@ -17,6 +17,9 @@ export default {
     ])
   },
   created() {
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') {
+      return
+    }
     console.log('getQueryObject', getQueryObject(location.search))
     const query = getQueryObject(location.search)
     if (query.page === 'tariff') {

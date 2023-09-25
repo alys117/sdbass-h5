@@ -59,6 +59,7 @@ export const constantRoutes = [
     path: '/example',
     component: Layout,
     redirect: '/example/table',
+    hidden: process.env.NODE_ENV === 'staging',
     name: 'Example',
     meta: { title: 'Example', icon: 'el-icon-s-help' },
     children: [
@@ -95,6 +96,12 @@ export const constantRoutes = [
         meta: { title: 'Table', icon: 'table' }
       },
       {
+        path: 'swiper/index',
+        name: 'Swiper',
+        component: () => import('@/views/circular-banner/index'),
+        meta: { title: '轮播图', icon: 'el-icon-map-location' }
+      },
+      {
         path: 'tree',
         name: 'Tree',
         hidden: true,
@@ -108,19 +115,25 @@ export const constantRoutes = [
     path: '/amap',
     component: Layout,
     hidden: false,
-    meta: { title: 'Amap', icon: 'el-icon-map-location' },
+    meta: { title: 'AMap', icon: 'el-icon-map-location' },
     children: [
       {
         path: 'index',
-        name: 'Amap',
-        component: () => import('@/views/amap/index'),
-        meta: { title: 'app1', icon: 'el-icon-map-location' }
+        name: 'Draw',
+        component: () => import('@/views/amap/draw/index'),
+        meta: { title: '商街圈选', icon: 'el-icon-map-location' }
+      },
+      {
+        path: 'poi/index',
+        name: 'POI',
+        component: () => import('@/views/amap/poi/index'),
+        meta: { title: '多源数据融合', icon: 'el-icon-map-location' }
       },
       {
         path: 'test/index',
-        name: 'Overlay',
-        component: () => import('@/views/amap/overlay/index'),
-        meta: { title: 'overlay', icon: 'el-icon-map-location' }
+        name: 'Test',
+        component: () => import('@/views/amap/test/index'),
+        meta: { title: '商街智能划分', icon: 'el-icon-map-location' }
       }
     ]
   },

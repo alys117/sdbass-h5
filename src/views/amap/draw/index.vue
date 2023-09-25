@@ -1,7 +1,7 @@
 <script>
 import AMapLoader from '@amap/amap-jsapi-loader'
-import './demo-center.css'
-import { log } from './demoutils'
+import '../demo-center.css'
+import { log } from '../demoutils'
 export default {
   name: 'Index',
   data() {
@@ -13,9 +13,9 @@ export default {
       direction: 'ttb',
       title: '框选区域详情',
       blocks: [
-        { code: '1', name: '区域1', detail: '详情1' },
-        { code: '2', name: '区域2', detail: '详情2' },
-        { code: '3', name: '区域3', detail: '详情3' }
+        { code: '1', name: '区域1', detail: '详情1', path: [] },
+        { code: '2', name: '区域2', detail: '详情2', path: [] },
+        { code: '3', name: '区域3', detail: '详情3', path: [] }
       ]
     }
   },
@@ -45,13 +45,23 @@ export default {
     submit() {
       this.drawer = false
       // todo 提交
+      console.log(this.blocks)
     },
     detail() {
       this.drawer = true
       console.log(this.overlays)
       this.blocks = []
       this.overlays.map(item => {
-        this.blocks.push({ code: Object.keys(item)[0], name: Object.values(item)[0].getExtData().name, detail: Object.values(item)[0].getExtData().detail })
+        const first = item[Object.keys(item)[0]].getPath()[0]
+        const point = [first.lng, first.lat]
+        const path = item[Object.keys(item)[0]].getPath().map(i => [i.lng, i.lat])
+        path.push(point)
+        this.blocks.push({
+          code: Object.keys(item)[0],
+          name: Object.values(item)[0].getExtData().name,
+          detail: Object.values(item)[0].getExtData().detail,
+          path: path
+        })
       })
     },
     drawPolygon() {
@@ -252,12 +262,12 @@ export default {
 .drawer-container ::v-deep .el-drawer__header {
   height: 40px;
   font-size: 16px;
-  font-weight: 900;
+  font-weight: 500;
   margin-bottom: 0;
   padding: 10px;
-  background: #fcfcfc;
-  //background: #22272e;
-  //color: #adbac7;
+  //background: #fcfcfc;
+  background: #e5ebf1;
+  color: #1f2d3d;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

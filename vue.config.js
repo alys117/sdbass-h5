@@ -6,6 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
+console.log(process.env.NODE_ENV, '==========process.env.NODE_ENV=========')
 const name = defaultSettings.title || 'sdbass-h5' // page title
 
 // If your port is set to 80,
@@ -25,7 +26,7 @@ module.exports = {
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
   // publicPath: '/',
-  publicPath: process.env.NODE_ENV === 'development' ? '/' : '/WebReport/widgets/apps',
+  publicPath: ['development', 'staging'].includes(process.env.NODE_ENV) ? '/' : '/WebReport/widgets/apps',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',

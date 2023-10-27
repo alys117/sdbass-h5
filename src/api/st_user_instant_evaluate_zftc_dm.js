@@ -7,6 +7,14 @@ export function getList(params) {
     params
   })
 }
+
+export function getSdbass(params) {
+  return request({
+    url: contextPath + '/sdbass/ttt',
+    method: 'get',
+    params
+  })
+}
 export function getMaxOpTime(params) {
   return request({
     // url: context + '/decision/sp/client/api/sql/st_user_instant_evaluate_zftc_dm/optime',

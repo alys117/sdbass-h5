@@ -39,7 +39,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js'),
+    before: process.env.MOCK === 'true' ? require('./mock/mock-server') : app => {},
     proxy: {
       '/dev-api': {
         target: 'http://localhost:8075',

@@ -1,16 +1,29 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+<!--  <div :class="className" :style="{height:height,width:width}" />-->
+  <div v-resize="myResizeHandler" :class="className" :style="{height:height,width:width}" />
 </template>
 
 <script>
 import * as echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
+import myResize from './v-resize'
 
 const animationDuration = 500
 
 export default {
+  /**
+   * mixins: [resize]  // 混合方式封装resize，里面采用的是监听window的resize事件，这种方式没法监听div的display属性变化（none，block）
+  * */
   mixins: [resize],
+  /**
+   *   directives: {
+   *     resize: myResize // 指令方式封装resize
+   *   }
+   * */
+  directives: {
+    resize: myResize // 指令方式封装resize
+  },
   props: {
     className: {
       type: String,
@@ -55,6 +68,12 @@ export default {
     this.chart = null
   },
   methods: {
+    myResizeHandler(size) {
+      console.log('BarChart size', size)
+      if (this.chart) {
+        this.chart.resize()
+      }
+    },
     initChart() {
       if (this.chart) this.chart.dispose()
       this.chart = echarts.init(this.$el, 'macarons')

@@ -8,12 +8,20 @@ export function login(data) {
   })
 }
 
-export function getInfo(token) {
-  return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
-  })
+export function getInfo(token, options = {}) {
+  if (options && options.mobile) {
+    return request({
+      url: '/vue-admin-template/user/info',
+      method: 'get',
+      params: { token, mobile: options.mobile }
+    })
+  } else {
+    return request({
+      url: '/vue-admin-template/user/info',
+      method: 'get',
+      params: { token }
+    })
+  }
 }
 
 export function logout() {

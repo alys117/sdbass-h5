@@ -58,11 +58,23 @@ export const constantRoutes = [
   {
     path: '/example',
     component: Layout,
-    redirect: '/example/table',
+    redirect: '/example/index',
     hidden: process.env.NODE_ENV === 'staging',
     name: 'Example',
     meta: { title: 'Example', icon: 'el-icon-s-help' },
     children: [
+      {
+        path: 'index',
+        name: 'Index',
+        component: () => import('@/views/kefu/index'),
+        meta: { title: '客服部报表目录', icon: 'table' }
+      },
+      {
+        path: 'tabs',
+        name: 'Tabs',
+        component: () => import('@/views/kefu/tabs.vue'),
+        meta: { title: 'Tabs', icon: 'table' }
+      },
       {
         path: 'tariff-satisfaction',
         name: 'TariffSatisfaction',

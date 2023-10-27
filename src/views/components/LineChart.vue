@@ -1,13 +1,18 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <!--  <div :class="className" :style="{height:height,width:width}" />-->
+  <div v-resize="myResizeHandler" :class="className" :style="{height:height,width:width}" />
 </template>
 
 <script>
 import * as echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
+import myResize from '@/views/components/v-resize'
 
 export default {
+  directives: {
+    resize: myResize // 指令方式封装resize
+  },
   mixins: [resize],
   props: {
     className: {
@@ -57,6 +62,12 @@ export default {
     this.chart = null
   },
   methods: {
+    myResizeHandler(size) {
+      console.log('LineChart size', size)
+      if (this.chart) {
+        this.chart.resize()
+      }
+    },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)

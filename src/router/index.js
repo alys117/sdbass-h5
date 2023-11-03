@@ -59,7 +59,7 @@ export const constantRoutes = [
     path: '/example',
     component: Layout,
     redirect: '/example/index',
-    hidden: process.env.NODE_ENV === 'staging',
+    // hidden: process.env.NODE_ENV === 'staging',
     name: 'Example',
     meta: { title: 'Example', icon: 'el-icon-s-help' },
     children: [

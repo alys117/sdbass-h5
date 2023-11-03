@@ -1,0 +1,14 @@
+@font-face {
+    font-family: "FZZJ-LJDXKJW";
+    src: url("FZZJ-LJDXKJW.eot"); /* IE9 */
+    src: url("FZZJ-LJDXKJW.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    
+    url("FZZJ-LJDXKJW.woff") format("woff"), /* chrome、firefox */
+    url("FZZJ-LJDXKJW.ttf") format("truetype"), /* chrome、firefox、opera、Safari, Android, iOS 4.2+ */
+    
+    url("FZZJ-LJDXKJW.svg#FZZJ-LJDXKJW") format("svg"); /* iOS 4.1- */
+    font-style: normal;
+    font-weight: normal;
+}
+
+

@@ -114,7 +114,7 @@
       </div>
     </div>
     <div :style="{height: height3 + 'px'}" class="version" @click="screenImage">
-      中国移动山东公司客服部（V1.0版)
+      中国移动山东公司客服部（V2.0版)
     </div>
   </div>
 </template>

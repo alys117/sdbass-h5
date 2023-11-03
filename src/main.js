@@ -13,7 +13,7 @@ import store from './store'
 import router from './router'
 
 import '@/icons' // icon
-import '@/permission' // permission control
+import '@/permission'
 
 /**
  * If you don't want to use mock-server
@@ -23,11 +23,11 @@ import '@/permission' // permission control
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-if (process.env.NODE_ENV === 'production') {
+console.log('--------process.env.NODE_ENV------', process.env.NODE_ENV)
+if (process.env.NODE_ENV === 'staging') {
   const { mockXHR } = require('../mock')
   mockXHR()
 }
-
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

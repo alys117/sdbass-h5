@@ -30,6 +30,7 @@ export default {
     ])
   },
   async mounted() {
+    history.pushState(null, null, document.URL)
     this.naviBarHeight = this.sidebar.naviBarHeight
     if (this.roles.length) {
       this.loading = false

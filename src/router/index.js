@@ -142,6 +142,12 @@ export const constantRoutes = [
         meta: { title: '多源数据融合', icon: 'el-icon-map-location' }
       },
       {
+        path: 'test2/index',
+        name: 'POI',
+        component: () => import('@/views/amap/test2/index'),
+        meta: { title: 'test2', icon: 'el-icon-map-location' }
+      },
+      {
         path: 'test/index',
         name: 'Test',
         component: () => import('@/views/amap/test/index'),

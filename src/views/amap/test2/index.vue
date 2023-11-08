@@ -14,7 +14,9 @@ export default {
     FTip
   },
   data() {
-    return {}
+    return {
+      abc: 123
+    }
   },
   async mounted() {
     const { data } = await axios.get(process.env['VUE_APP_STATIC'] + '/mock/equipments.json')
@@ -64,7 +66,7 @@ export default {
         })
       })
       const polygons = []
-      console.log(this.areas, 'this.areas')
+      // console.log(this.areas, 'this.areas')
       this.areas.forEach(item => {
         const geo1 = WKT.parse(item.boundary)
         const polygon = new this.AMap.Polygon({
@@ -134,9 +136,10 @@ export default {
         // })
       })
     },
-    initCluster(_points, clusterName = 'cluster') {
+    initCluster(points, clusterName) {
+      console.log('initCluster', clusterName, points)
       const gridSize = 60
-      var count = _points.length
+      var count = points.length
       var _renderClusterMarker = (context) => {
         var factor = Math.pow(context.count / count, 1 / 18)
         var div = document.createElement('div')
@@ -173,6 +176,55 @@ export default {
         // 点标记中的图标
         var markerImg = document.createElement('img')
         markerImg.className = 'markerlnglat'
+        // markerImg.src = 'https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png'
+        markerImg.src = require('@/assets/images/box.png')
+        markerImg.setAttribute('width', '34px')
+        markerImg.setAttribute('height', '34px')
+
+        markerContent.appendChild(markerImg)
+
+        // 点标记中的文本
+        var markerSpan = document.createElement('span')
+        markerSpan.className = 'marker'
+        markerSpan.innerHTML = context.data[0].label
+        // markerContent.appendChild(markerSpan)
+
+        context.marker.setContent(markerContent)
+        context.marker.on('click', e => {
+          this.map.remove(this.polygons)
+          const points = this.buildings.filter(i => i.gfxx_id === context.data[0].gfxx_id)
+            .map(i => { (i.lnglat = [i.ent_lon_gd, i.ent_lat_gd], i.label = i.ENTERPRISE_NAME, i); return i })
+          this.addCircle(context)
+          console.log(points, 'points')
+          console.log(this, 'this')
+          this.initCluster2(points, 'cluster2')
+          this.$refs.ftip2.show(context)
+        })
+      }
+
+      this[clusterName] = new this.AMap.MarkerCluster(this.map, points, {
+        gridSize: gridSize, // 设置网格像素大小
+        renderClusterMarker: _renderClusterMarker, // 自定义聚合点样式
+        renderMarker: _renderMarker // 自定义非聚合点样式
+      })
+    },
+    initCluster2(points, clusterName) {
+      console.log('initCluster2', clusterName, points)
+      const gridSize = 60
+      const _renderMarker = (context) => {
+        var content =
+          '<div style="background-color: hsla(180, 100%, 50%, 0.3); height: 18px; width: 18px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 3px;"></div>'
+        const offset = new this.AMap.Pixel(-9, -9)
+        context.marker.setContent(content)
+        context.marker.setOffset(offset)
+
+        // 自定义点标记内容
+        const markerContent = document.createElement('div')
+        markerContent.className = 'marker-cluster-content'
+
+        // 点标记中的图标
+        const markerImg = document.createElement('img')
+        markerImg.className = 'markerlnglat'
         switch (context.data[0].data_ly) {
           case 'yijing':
             markerImg.src = require('@/assets/images/marker-blue.png')
@@ -201,84 +253,59 @@ export default {
         var markerSpan = document.createElement('span')
         markerSpan.className = 'marker'
         markerSpan.innerHTML = context.data[0].label
-        markerContent.appendChild(markerSpan)
+        // markerContent.appendChild(markerSpan)
 
         context.marker.setContent(markerContent)
 
-        if (clusterName === 'cluster') {
-          context.marker.on('click', e => {
-            this.map.remove(this.polygons)
-            const points = this.buildings.filter(i => i.gfxx_id === context.data[0].gfxx_id)
-              .map(i => { (i.lnglat = [i.ent_lon_gd, i.ent_lat_gd], i.label = i.ENTERPRISE_NAME, i); return i })
-            this.addCircle(context)
-            console.log(points, 'points')
-            this.initCluster(points, 'cluster2')
-            this.$refs.ftip2.show(context)
-          })
-        } else {
-          context.marker.on('click', e => {
-            console.log(e, 'aaaaaa')
-            this.$refs.ftip.show(context)
-          })
-        }
+        context.marker.on('click', e => {
+          console.log(e, 'aaaaaa')
+          this.$refs.ftip.show(context)
+        })
       }
-      if (this._addCluster) {
-        this._addCluster(clusterName, _points)
-        return
-      }
-      this._addCluster = (name, points) => {
-        if (this[name]) {
-          this[name].setMap(null)
+      const sts = [
+        {
+          url: '//a.amap.com/jsapi_demos/static/images/blue.png',
+          size: new this.AMap.Size(32, 32),
+          offset: new this.AMap.Pixel(-16, -16)
+        },
+        {
+          url: '//a.amap.com/jsapi_demos/static/images/green.png',
+          size: new this.AMap.Size(32, 32),
+          offset: new this.AMap.Pixel(-16, -16)
+        },
+        {
+          url: '//a.amap.com/jsapi_demos/static/images/orange.png',
+          size: new this.AMap.Size(36, 36),
+          offset: new this.AMap.Pixel(-18, -18)
+        },
+        {
+          url: '//a.amap.com/jsapi_demos/static/images/red.png',
+          size: new this.AMap.Size(48, 48),
+          offset: new this.AMap.Pixel(-24, -24)
+        },
+        {
+          url: '//a.amap.com/jsapi_demos/static/images/darkRed.png',
+          size: new this.AMap.Size(48, 48),
+          offset: new this.AMap.Pixel(-24, -24)
         }
-        if (name === 'cluster') {
-          this[name] = new this.AMap.MarkerCluster(this.map, points, {
-            gridSize: gridSize, // 设置网格像素大小
-            renderClusterMarker: _renderClusterMarker, // 自定义聚合点样式
-            renderMarker: _renderMarker // 自定义非聚合点样式
-          })
-        } else {
-          // 自定义图标
-          var sts = [
-            {
-              url: '//a.amap.com/jsapi_demos/static/images/blue.png',
-              size: new this.AMap.Size(32, 32),
-              offset: new this.AMap.Pixel(-16, -16)
-            },
-            {
-              url: '//a.amap.com/jsapi_demos/static/images/green.png',
-              size: new this.AMap.Size(32, 32),
-              offset: new this.AMap.Pixel(-16, -16)
-            },
-            {
-              url: '//a.amap.com/jsapi_demos/static/images/orange.png',
-              size: new this.AMap.Size(36, 36),
-              offset: new this.AMap.Pixel(-18, -18)
-            },
-            {
-              url: '//a.amap.com/jsapi_demos/static/images/red.png',
-              size: new this.AMap.Size(48, 48),
-              offset: new this.AMap.Pixel(-24, -24)
-            },
-            {
-              url: '//a.amap.com/jsapi_demos/static/images/darkRed.png',
-              size: new this.AMap.Size(48, 48),
-              offset: new this.AMap.Pixel(-24, -24)
-            }
-          ]
-          this[name] = new this.AMap.MarkerCluster(this.map, points, {
-            styles: sts,
-            gridSize: gridSize,
-            renderMarker: _renderMarker // 自定义非聚合点样式
-          })
-        }
+      ]
+      console.log(this[clusterName], 'this[clusterName]')
+      if (this[clusterName]) {
+        console.log('清除', clusterName)
+        this[clusterName].setMap(null)
       }
-      this._addCluster(clusterName, _points)
+      this[clusterName] = new this.AMap.MarkerCluster(this.map, points, {
+        styles: sts,
+        gridSize: gridSize,
+        renderMarker: _renderMarker // 自定义非聚合点样式
+      })
     },
-    addCluster(clusterName = 'cluster') {
-      this._addCluster(clusterName, this.points)
+    addCluster() {
+      if (this['cluster2']) this['cluster2'].setMap(null)
+      this.initCluster(this.points, 'cluster')
     },
-    clearCluster(clusterName = 'cluster') {
-      this[clusterName].setMap(null)
+    clearCluster() {
+      this['cluster'].setMap(null)
     },
     async findBuildings(gfxx_id) {
       const tmp = await axios(process.env['VUE_APP_STATIC'] + '/mock/buildings.json')
@@ -319,7 +346,7 @@ export default {
     <FTip ref="ftip" :cover="true" pos="top" />
     <FTip ref="ftip2" :cover="false" pos="bottom" />
     <div style="position: fixed;bottom: 30px; right: 200px">
-      <el-button type="danger" size="mini" @click="clearCluster('cluster')">清除</el-button>
+      <el-button type="danger" size="mini" @click="clearCluster()">清除</el-button>
       <el-button type="success" size="mini" @click="addCluster('cluster')">显示</el-button>
     </div>
   </div>

@@ -143,7 +143,7 @@ export const constantRoutes = [
       },
       {
         path: 'test2/index',
-        name: 'POI',
+        name: 'Equipment',
         component: () => import('@/views/amap/test2/index'),
         meta: { title: 'test2', icon: 'el-icon-map-location' }
       },

@@ -90,7 +90,7 @@ export default {
       </div>
       <div class="flower" />
     </div>
-    <div class="index-title">中国移动山东公司<br>客户服务部</div>
+<!--    <div class="index-title">中国移动山东公司<br>客户服务部</div>-->
     <div class="index-container">
       <div class="item" :style="{color: roles.includes(TARIFF)?'#000':'#ccc'}" @click="go(1)">
         <div>手机资费满意度</div><div><i class="el-icon-arrow-right" /></div>
@@ -103,6 +103,7 @@ export default {
       </div>
       <div class="attention">本报为内部信息，供各位领导参阅，请勿外传</div>
     </div>
+    <div class="index-title bottom">中国移动山东公司客户服务部(v2.0版)</div>
   </div>
 </template>
 
@@ -111,7 +112,11 @@ export default {
   height: calc(100vh - var(--height));
   width: 100%;
   overflow-y: auto;
-  background-image: linear-gradient(90deg, rgb(203, 239, 238) 0%, rgb(223, 252, 248) 100%);
+  //background-image: linear-gradient(90deg, rgb(203, 239, 238) 0%, rgb(223, 252, 248) 100%);
+  background-image: url("~@/assets/images/yellow-pg.png");
+  background-size: cover;
+  //background-repeat: no-repeat;
+  background-position: top center;
 }
 .yun{
   background-image: url("~@/assets/images/yun.png");
@@ -157,18 +162,22 @@ ul li{
 }
 .flower{
   margin: auto;
-  background-image: url("~@/assets/images/flower.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center center;
-  height: 200px;
+  //background-image: url("~@/assets/images/flower.png");
+  //background-size: contain;
+  //background-repeat: no-repeat;
+  //background-position: center center;
+  height: 230px;
 }
 .index-title{
   padding-top: 30px;
   text-align: center;
-  letter-spacing: 5px;
+  //letter-spacing: 5px;
   font-size: 14px;
   font-weight: 900;
+}
+.bottom{
+  margin-top: 50px;
+  width: 100vw;
 }
 .index-container{
   margin: 20px;

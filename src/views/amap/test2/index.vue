@@ -4,9 +4,10 @@ import '../demo-center.css'
 import '@/assets/iconfont/iconfont.css'
 import AMapLoader from '@amap/amap-jsapi-loader'
 
-import { buildings } from './buildings'
-import { equipments } from './equipment'
+// import { buildings } from './buildings'
+// import { equipments } from './equipment'
 import WKT from 'terraformer-wkt-parser'
+import axios from 'axios'
 export default {
   name: 'Overlay',
   components: {
@@ -16,9 +17,11 @@ export default {
     return {}
   },
   async mounted() {
+    const { data } = await axios.get(process.env['VUE_APP_STATIC'] + '/mock/equipments.json')
+    this.equipments = data
     await this.initMap()
     this.getAllArea()
-    this.points = equipments.map(item => {
+    this.points = this.equipments.map(item => {
       return {
         gfxx_id: item.gfxx_id,
         gfxx_name: item.gfxx_name,
@@ -37,24 +40,27 @@ export default {
         PRODUCT_NAME: '', // item.PRODUCT_NAME, // 云产品名称
         ent_m: '', // item.ent_m, // 集团产品收入
         name: item.gfxx_name, // item.name + ' ' + item.MSISDN, // 客户经理
+        label: item.gfxx_name,
         product_name_2: '', // item.product_name_2, // 企宽产品名称
         poi_id: '', // item.poi_id, // poi_id
         poi_name: '' // item.poi_name // poi名称
       }
     })
     this.initCluster(this.points, 'cluster')
+    const { data: tmp } = await axios(process.env['VUE_APP_STATIC'] + '/mock/buildings.json')
+    this.buildings = tmp
   },
   methods: {
     getAllArea() {
       this.areas = []
       this.areaNames = new Set()
-      equipments.forEach(i => {
+      this.equipments.forEach(i => {
         this.areaNames.add(i.name)
       })
       this.areaNames.forEach(i => {
         this.areas.push({
           area: i,
-          boundary: equipments.find(j => j.name === i).bundary
+          boundary: this.equipments.find(j => j.name === i).bundary
         })
       })
       const polygons = []
@@ -167,15 +173,34 @@ export default {
         // 点标记中的图标
         var markerImg = document.createElement('img')
         markerImg.className = 'markerlnglat'
-        markerImg.src = 'https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png'
-        markerImg.setAttribute('width', '25px')
-        markerImg.setAttribute('height', '34px')
+        switch (context.data[0].data_ly) {
+          case 'yijing':
+            markerImg.src = require('@/assets/images/marker-blue.png')
+            markerImg.setAttribute('width', '32px')
+            markerImg.setAttribute('height', '32px')
+            break
+          case 'esop':
+            markerImg.src = require('@/assets/images/marker-orange.png')
+            markerImg.setAttribute('width', '32px')
+            markerImg.setAttribute('height', '32px')
+            break
+          case 'gaode':
+            markerImg.src = require('@/assets/images/marker-green.png')
+            markerImg.setAttribute('width', '32px')
+            markerImg.setAttribute('height', '32px')
+            break
+          default:
+            markerImg.src = 'https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png'
+            markerImg.setAttribute('width', '25px')
+            markerImg.setAttribute('height', '34px')
+        }
+
         markerContent.appendChild(markerImg)
 
         // 点标记中的文本
         var markerSpan = document.createElement('span')
         markerSpan.className = 'marker'
-        markerSpan.innerHTML = context.data[0].name
+        markerSpan.innerHTML = context.data[0].label
         markerContent.appendChild(markerSpan)
 
         context.marker.setContent(markerContent)
@@ -183,13 +208,16 @@ export default {
         if (clusterName === 'cluster') {
           context.marker.on('click', e => {
             this.map.remove(this.polygons)
-            console.log(context.data[0].gfxx_id.toString(), 'context.data[0].gfxx_id')
-            const points = this.findBuildings(context.data[0].gfxx_id)
-              .map(i => { return { lnglat: [i.ent_lon_gd, i.ent_lat_gd], name: i.ENTERPRISE_NAME } })
+            const points = this.buildings.filter(i => i.gfxx_id === context.data[0].gfxx_id)
+              .map(i => { (i.lnglat = [i.ent_lon_gd, i.ent_lat_gd], i.label = i.ENTERPRISE_NAME, i); return i })
             this.addCircle(context)
             console.log(points, 'points')
             this.initCluster(points, 'cluster2')
-            console.log(this, 'this')
+            this.$refs.ftip2.show(context)
+          })
+        } else {
+          context.marker.on('click', e => {
+            console.log(e, 'aaaaaa')
             this.$refs.ftip.show(context)
           })
         }
@@ -239,7 +267,8 @@ export default {
           ]
           this[name] = new this.AMap.MarkerCluster(this.map, points, {
             styles: sts,
-            gridSize: gridSize
+            gridSize: gridSize,
+            renderMarker: _renderMarker // 自定义非聚合点样式
           })
         }
       }
@@ -251,8 +280,10 @@ export default {
     clearCluster(clusterName = 'cluster') {
       this[clusterName].setMap(null)
     },
-    findBuildings(gfxx_id) {
-      const belongBuildings = buildings.filter(i => i.gfxx_id === gfxx_id)
+    async findBuildings(gfxx_id) {
+      const tmp = await axios(process.env['VUE_APP_STATIC'] + '/mock/buildings.json')
+      this.buildings = tmp.data
+      const belongBuildings = this.buildings.filter(i => i.gfxx_id === gfxx_id)
       return belongBuildings
     },
     addCircle(context) {
@@ -285,7 +316,8 @@ export default {
 <template>
   <div>
     <div id="container" class="map" tabindex="0" />
-    <FTip ref="ftip" />
+    <FTip ref="ftip" :cover="true" pos="top" />
+    <FTip ref="ftip2" :cover="false" pos="bottom" />
     <div style="position: fixed;bottom: 30px; right: 200px">
       <el-button type="danger" size="mini" @click="clearCluster('cluster')">清除</el-button>
       <el-button type="success" size="mini" @click="addCluster('cluster')">显示</el-button>

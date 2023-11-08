@@ -3,11 +3,14 @@ import '../demo-center.css'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import { convexHull } from '@/views/amap/convertHull'
 import WKT from 'terraformer-wkt-parser'
-import { arr } from './data2'
+import axios from 'axios'
+// import { arr } from './data2'
 export default {
   name: 'Index',
   async mounted() {
     await this.initMap()
+    const { data } = await axios.get(process.env['VUE_APP_STATIC'] + '/mock/data2.json')
+    this.arr = data
     this.getAllArea()
     // this.getAllPoints()
     this.showCluster()
@@ -16,13 +19,13 @@ export default {
     getAllArea() {
       this.areas = []
       this.areaNames = new Set()
-      arr.forEach(i => {
+      this.arr.forEach(i => {
         this.areaNames.add(i.area)
       })
       this.areaNames.forEach(i => {
         this.areas.push({
           area: i,
-          boundary: arr.find(j => j.area === i).boundary
+          boundary: this.arr.find(j => j.area === i).boundary
         })
       })
       const polygons = []
@@ -59,7 +62,7 @@ export default {
     },
     getAllPoints() {
       this.points = []
-      arr.forEach(i => {
+      this.arr.forEach(i => {
         const marker = new this.AMap.Marker({
           position: new this.AMap.LngLat(i.ent_lon_gd, i.ent_lat_gd),
           title: i.ENTERPRISE_NAME
@@ -115,7 +118,7 @@ export default {
     showCluster() {
       let cluster
       const gridSize = 60
-      const _points = arr.map(item => {
+      const _points = this.arr.map(item => {
         return {
           enterpriseName: item.ENTERPRISE_NAME, // 企业名称
           lnglat: [item.ent_lon_gd, item.ent_lat_gd] // 经纬度

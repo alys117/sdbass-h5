@@ -4,8 +4,9 @@ import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
 import '../demo-center.css'
 import '@/assets/iconfont/iconfont.css'
 import AMapLoader from '@amap/amap-jsapi-loader'
+import axios from 'axios'
 
-import { sources } from './source'
+// import { sources } from './source'
 // import { points } from './china'
 // import { targets } from './民生大街'
 export default {
@@ -88,7 +89,7 @@ export default {
         // })
       })
     },
-    continue() {
+    async continue() {
       var cluster
       var gridSize = 60
       // 数据中需包含经纬度信息字段 lnglat
@@ -99,6 +100,7 @@ export default {
       // ...
       // ]
 
+      const { data: sources } = await axios.get(process.env['VUE_APP_STATIC'] + '/mock/sources.json')
       const _points = sources.map(item => {
         return {
           lnglat: [item.poi_lng_gd, item.poi_lat_gd], // 经纬度

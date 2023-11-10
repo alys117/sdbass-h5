@@ -17,6 +17,9 @@ export default {
     }
   },
   computed: {
+    test() {
+      return window.innerHeight + '  ' + window.innerWidth
+    },
     dateRange() {
       if (this.day === '1970-01-01') {
         return 'M月D日-M月D日'
@@ -88,9 +91,11 @@ export default {
       <div class="date-container">
         <span>{{ dateRange }}</span>
       </div>
-      <div class="flower" />
+      <div class="flower">
+<!--        {{ test }}-->
+      </div>
     </div>
-<!--    <div class="index-title">中国移动山东公司<br>客户服务部</div>-->
+    <!--    <div class="index-title">中国移动山东公司<br>客户服务部</div>-->
     <div class="index-container">
       <div class="item" :style="{color: roles.includes(TARIFF)?'#000':'#ccc'}" @click="go(1)">
         <div>手机资费满意度</div><div><i class="el-icon-arrow-right" /></div>
@@ -176,8 +181,16 @@ ul li{
   font-weight: 900;
 }
 .bottom{
-  margin-top: 50px;
+  padding: 20px;
   width: 100vw;
+}
+@media screen and (min-height: 820px) {
+  .bottom{
+    position: fixed;
+    bottom: 0;
+    padding: 20px;
+    width: 100vw;
+  }
 }
 .index-container{
   margin: 20px;

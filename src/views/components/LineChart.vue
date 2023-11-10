@@ -4,7 +4,8 @@
 </template>
 
 <script>
-import * as echarts from 'echarts'
+// import * as echarts from 'echarts'
+import echarts from '@/utils/echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
 import myResize from '@/views/components/v-resize'

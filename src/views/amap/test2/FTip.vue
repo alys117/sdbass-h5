@@ -44,8 +44,9 @@ export default {
     close() {
       this.$refs.myModule.classList.add('hidden')
     },
-    show(context) {
+    show(context, count) {
       console.log(this.pos, 'this.pos', this.cover, 'this.cover')
+      this.$refs.myModule.classList.remove('hidden')
       const doms = {
         t0: document.querySelector('#t0'),
         t1: document.querySelector('#t1'),
@@ -54,8 +55,24 @@ export default {
         t4: document.querySelector('#t4'),
         t5: document.querySelector('#t5'),
         t6: document.querySelector('#t6'),
-        t7: document.querySelector('#t7')
-      };
+        t7: document.querySelector('#t7'),
+        t8: document.querySelector('#t8')
+      }
+      setTimeout(() => {
+        if (this.pos === 'top') {
+          console.log(context.data[0], 'context.data[0]', this.pos)
+          doms.t1.innerHTML = context.data[0].ENTERPRISE_NAME
+          doms.t2.innerHTML = context.data[0].esop_ENT_INDUSTRY_NAME4
+          doms.t3.innerHTML = context.data[0].gfxx_name
+          doms.t4.innerHTML = context.data[0].data_ly === 'yijing' ? '一经' : 'esop'
+        } else if (this.pos === 'bottom') {
+          console.log(context.data[0], 'context.data[0]', this.pos)
+          doms.t5.innerHTML = context.data[0].gfxx_name
+          doms.t6.innerHTML = count
+          doms.t7.innerHTML = context.data[0].terminals_usage
+          doms.t8.innerHTML = context.data[0].capacity_usage
+        }
+      }, 100);
       (async() => {
         // const a = await fetch('https://restapi.amap.com/v3/place/detail?key=53c2aebc8df5706db94356697c8ae49d&id=' + context.data[0].poi_id)
         // const b = await a.json()
@@ -69,8 +86,6 @@ export default {
           this.pics = [{ url: 'https://www.amap.com/assets/img/place_default.jpg' }]
         }
       })()
-      this.$refs.myModule.classList.remove('hidden')
-      console.log(context)
     }
   }
 }
@@ -108,7 +123,7 @@ export default {
     </div>
     <div class="detail" :style="{'padding' : pos==='top'? '10px 0':'0 0 10px 0' }">
       <div v-if="pos!=='top'" style="display: flex; justify-content: space-between; border-bottom: 1px solid #2B9AEB;padding: 5px">
-        <span style="font-size: 14px;font-weight: 900;display: inline-block;margin-left: 10px">封线箱详情</span>
+        <span style="font-size: 14px;font-weight: 900;display: inline-block;margin-left: 10px">分纤箱详情</span>
         <i class="iconfont icon-guanbi2fill" style="margin-right: 5px;font-size: 14px; user-select: none;cursor: pointer" @click="close" />
       </div>
       <div v-if="false" class="col">
@@ -118,37 +133,38 @@ export default {
           价值评分
         </div>
       </div>
-      <div class="col">
+      <div v-if="pos==='top'" class="col">
         <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-dangan2" style="color: #666;padding-right: 5px;" />商铺名称：</span>
         <span style="font-weight: 500;"><span id="t1" /></span>
       </div>
-      <div class="col">
+      <div v-if="pos==='top'" class="col">
         <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-ercibianma-" style="color: #666;padding-right: 5px;" />行业：</span>
         <span style="font-weight: 500;"><span id="t2" /></span>
       </div>
-      <div class="col">
-        <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-dizhi" style="color: #666;padding-right: 5px;" />所属封线箱：</span>
+      <div v-if="pos==='top'" class="col">
+        <span v-if="pos==='top'" style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-dizhi" style="color: #666;padding-right: 5px;" />所属分纤箱：</span>
         <span style="font-weight: 500;"><span id="t3" /></span>
       </div>
-      <div class="col">
+      <div v-if="pos==='top'" class="col">
         <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-chengshijinglitianchong" style="color: #666;padding-right: 5px;" />来源：</span>
         <span style="font-weight: 500;"><span id="t4" /></span>
       </div>
-      <div v-if="false" class="col">
-        <span style="font-size: 16px; color: #777;font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-dinggou" style="color: #666;padding-right: 5px;" />产品订购情况</span>
-        <span style="font-weight: 500;" />
-      </div>
-      <div v-if="false" class="col">
-        <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><span style="display: inline-block; width: 20px;" /><i class="iconfont icon-qiye" style="color: #666;padding-right: 5px;" />企宽产品名称：</span>
+
+      <div v-if="pos==='bottom'" class="col">
+        <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-shouru" style="color: #666;padding-right: 5px;" />分纤箱名称：</span>
         <span style="font-weight: 500;"><span id="t5" /></span>
       </div>
-      <div v-if="false" class="col">
-        <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><span style="display: inline-block; width: 20px;" /><i class="iconfont icon-cloud-disk-full" style="color: #666;padding-right: 5px;" />云产品名称：</span>
+      <div v-if="pos==='bottom'" class="col">
+        <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-ercibianma-" style="color: #666;padding-right: 5px;" />覆盖商铺数：</span>
         <span style="font-weight: 500;"><span id="t6" /></span>
       </div>
-      <div v-if="false" class="col">
-        <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><span style="display: inline-block; width: 20px;" /><i class="iconfont icon-shouru" style="color: #666;padding-right: 5px;" />集团产品收入：</span>
+      <div v-if="pos==='bottom'" class="col">
+        <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-cloud-disk-full" style="color: #666;padding-right: 5px;" />终端使用率：</span>
         <span style="font-weight: 500;"><span id="t7" /></span>
+      </div>
+      <div v-if="pos==='bottom'" class="col">
+        <span style="font-weight: 900;display: inline-block;width: 150px; text-align: left;"><i class="iconfont icon-qiye" style="color: #666;padding-right: 5px;" />承载力：</span>
+        <span style="font-weight: 500;"><span id="t8" /></span>
       </div>
     </div>
   </div>

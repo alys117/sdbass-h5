@@ -45,7 +45,7 @@ export default {
   created() {
     setTimeout(() => {
       this.loading = false
-    }, 10000)
+    }, 0)
     // if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') {
     //   return
     // }
@@ -76,7 +76,7 @@ export default {
     font-size: 30px;
     line-height: 46px;
     font-weight: 900;
-    font-family: "PingFang SC","Microsoft YaHei",serif;
+    font-family: "FZZJ-LJDXKJW","PingFang SC","Microsoft YaHei",serif;
     text-align: center;
   }
 }

@@ -1,10 +1,11 @@
 <template>
-<!--  <div :class="className" :style="{height:height,width:width}" />-->
+  <!--  <div :class="className" :style="{height:height,width:width}" />-->
   <div v-resize="myResizeHandler" :class="className" :style="{height:height,width:width}" />
 </template>
 
 <script>
-import * as echarts from 'echarts'
+// import * as echarts from 'echarts'
+import echarts from '@/utils/echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
 import myResize from './v-resize'
@@ -13,10 +14,6 @@ const animationDuration = 500
 
 export default {
   /**
-   * mixins: [resize]  // 混合方式封装resize，里面采用的是监听window的resize事件，这种方式没法监听div的display属性变化（none，block）
-  * */
-  mixins: [resize],
-  /**
    *   directives: {
    *     resize: myResize // 指令方式封装resize
    *   }
@@ -24,6 +21,10 @@ export default {
   directives: {
     resize: myResize // 指令方式封装resize
   },
+  /**
+   * mixins: [resize]  // 混合方式封装resize，里面采用的是监听window的resize事件，这种方式没法监听div的display属性变化（none，block）
+  * */
+  mixins: [resize],
   props: {
     className: {
       type: String,

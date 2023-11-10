@@ -198,7 +198,7 @@ export default {
           console.log(points, 'points')
           console.log(this, 'this')
           this.initCluster2(points, 'cluster2')
-          this.$refs.ftip2.show(context)
+          this.$refs.ftip2.show(context, points.length)
         })
       }
 
@@ -258,7 +258,6 @@ export default {
         context.marker.setContent(markerContent)
 
         context.marker.on('click', e => {
-          console.log(e, 'aaaaaa')
           this.$refs.ftip.show(context)
         })
       }
@@ -345,9 +344,11 @@ export default {
     <div id="container" class="map" tabindex="0" />
     <FTip ref="ftip" :cover="true" pos="top" />
     <FTip ref="ftip2" :cover="false" pos="bottom" />
-    <div style="position: fixed;bottom: 30px; right: 200px">
-      <el-button type="danger" size="mini" @click="clearCluster()">清除</el-button>
-      <el-button type="success" size="mini" @click="addCluster('cluster')">显示</el-button>
+    <div style="position: absolute;right: 240px;">
+      <div class="input-card" style="flex-direction: row;width: 150px;">
+        <el-button type="primary" size="mini" @click="clearCluster()">清除</el-button>
+        <el-button type="success" size="mini" @click="addCluster('cluster')">显示</el-button>
+      </div>
     </div>
   </div>
 </template>

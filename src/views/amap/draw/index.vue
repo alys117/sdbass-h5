@@ -1,4 +1,5 @@
 <script>
+import '@/assets/iconfont/iconfont.css'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import '../demo-center.css'
 import { log } from '../demoutils'
@@ -9,6 +10,13 @@ export default {
       // 此处不声明 map 对象，可以直接使用 this.map赋值或者采用非响应式的普通对象来存储。
       // map:null,
       drawer: false,
+      cardFlag: false,
+      currentCard: {
+        sid: '',
+        name: '',
+        detail: '',
+        area: ''
+      },
       mouseToolState: true,
       direction: 'ttb',
       title: '框选区域详情',
@@ -17,6 +25,11 @@ export default {
         { code: '2', name: '区域2', detail: '详情2', path: [] },
         { code: '3', name: '区域3', detail: '详情3', path: [] }
       ]
+    }
+  },
+  computed: {
+    test() {
+      return 123
     }
   },
   async mounted() {
@@ -46,6 +59,28 @@ export default {
       this.drawer = false
       // todo 提交
       console.log(this.blocks)
+    },
+    currentDetail(givenid) {
+      if (!this.overlays.length) {
+        this.$message({
+          message: '请先绘制区域',
+          type: 'warning'
+        })
+        return
+      }
+      this.cardFlag = true
+      const sid = givenid || Object.keys(this.overlays[0])[0]
+      const polygon = this.overlays.find(i => Object.keys(i)[0] === sid)[sid]
+      const { name, detail } = this.overlays.find(i => Object.keys(i)[0] === sid)[sid].getExtData()
+      // 围成的闭合区域面积，单位：平方米
+      var area = this.AMap.GeometryUtil.ringArea(polygon.getPath())
+      console.log(area)
+      this.currentCard = {
+        sid,
+        name,
+        detail,
+        area
+      }
     },
     detail() {
       this.drawer = true
@@ -88,14 +123,15 @@ export default {
       this.mouseTool && this.mouseTool.close() // 关闭工具     mouseTool.close(true)//关闭，并清除覆盖物
       this.mouseToolState = false
     },
-    openInfo(longitude, latitude, sid) {
-      const name = this.overlays.find(i => Object.keys(i)[0] === sid)[sid].getExtData().name || ''
+    openInfo(longitude, latitude, sid, tmpName) {
+      const name = this.overlays.find(i => Object.keys(i)[0] === sid)[sid].getExtData().name || tmpName
       const info = []
       info.push(`<div id="${sid}">
                     <div><img style="float:left;" src=" https://webapi.amap.com/images/autonavi.png "/></div>
                     <br/>
                     <div style="display: flex">
                       <div style="padding:5px 5px 0 0;"><button style="cursor: pointer;width: 80px;height: 24px; border: none;background: #7aacd4;color: white;border-radius: 3px" id="${sid + '_btn_open_edit'}">开启编辑</button></div>
+                      <div style="padding:5px 5px 0 0;"><button style="cursor: pointer;width: 80px;height: 24px; border: none;background: #2ecc71;color: white;border-radius: 3px" id="${sid + '_btn_detail_edit'}">详情</button></div>
                       <div style="padding:5px 5px 0 0;"><button style="cursor: pointer;text-align: center; width: 80px; height: 24px;border: none;background: lightcoral;color: white;border-radius: 3px" id="${sid + '_btn_delete_overlay'}">删除</button></div>
                     </div>
                     <div style="margin-top: 5px"><label for="${sid + '_name'}">名称：</label><input id="${sid + '_name'}" style="width: 200px;outline: none;border-radius: 5px;height: 30px;border: 1px solid #ccc" value="${name}"></input></div>
@@ -111,6 +147,9 @@ export default {
         this.editor = new this.AMap.PolygonEditor(this.map, this.overlays.find(i => Object.keys(i)[0] === sid)[sid])
         this.editor.open()
         this.infoWindow.close()
+      })
+      document.querySelector('#' + sid + '_btn_detail_edit').addEventListener('click', () => {
+        this.currentDetail(sid)
       })
       document.querySelector('#' + sid + '_name').addEventListener('change', () => {
         this.overlays.find(i => Object.keys(i)[0] === sid)[sid].setExtData({ name: document.querySelector('#' + sid + '_name').value })
@@ -142,7 +181,7 @@ export default {
       const AMap = await AMapLoader.load({
         key: 'bccefb89d678dfd94084583ff56e2af4', // 申请好的Web端开发者Key，首次调用 load 时必填
         version: '2.0', // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-        plugins: ['AMap.MouseTool', 'AMap.PolygonEditor', 'AMap.InfoWindow'] // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+        plugins: ['AMap.MouseTool', 'AMap.PolygonEditor', 'AMap.InfoWindow', 'AMap.GeometryUtil'] // 需要使用的的插件列表，如比例尺'AMap.Scale'等
       })
       this.AMap = AMap
       this.map = new this.AMap.Map('container', { // 设置地图容器id
@@ -173,20 +212,25 @@ export default {
 
         if (event.obj.className === 'Overlay.Polygon') {
           const polygon = event.obj
-          const sid = 'polygon_' + new Date().getTime()
+          const timestamp = new Date().getTime()
+          const sid = 'polygon_' + timestamp
+          const tmpName = '未命名_' + timestamp
+          this.overlays.push({ [sid]: polygon })
+          console.log('添加临时名称')
+          const extData = this.overlays.find(i => Object.keys(i)[0] === sid)[sid].getExtData()
+          extData.name = tmpName
           polygon.on('rightclick', e => {
             this.closeEditor()
             this.closeMouseTool()
-            this.openInfo(e.lnglat.getLng(), e.lnglat.getLat(), sid)
+            this.openInfo(e.lnglat.getLng(), e.lnglat.getLat(), sid, tmpName)
           })
           polygon.on('dblclick', e => {
             var text = '您在 [ ' + e.lnglat.getLng() + ',' + e.lnglat.getLat() + ' ] 的位置点击了多边形！'
             log.info(text)
           })
-          polygon.on('dragend', function(e) {
+          polygon.on('dragend', e => {
             console.log(polygon.getPath())
           })
-          this.overlays.push({ [sid]: polygon })
           polygon.getPath().forEach(i => {
             console.log(' lat lng :>> ', i.lat, i.lng)
           })
@@ -241,11 +285,38 @@ export default {
     </div>
     <div id="container" />
     <div class="input-card" style="width: 200px">
-      <h4 style="margin-bottom: 10px; font-weight: 600">利用mouseTool绘制覆盖物</h4>
+      <h4 style="margin-bottom: 10px; font-weight: 600">mouseTool绘制覆盖物</h4>
       <button class="btn" style="margin-bottom: 5px" @click="drawPolygon()">{{ !mouseToolState ? '绘制商街区域范围' : '关闭绘制' }}</button>
       <button class="btn" style="margin-bottom: 5px" @click="closeEditor()">结束编辑</button>
       <button class="btn" style="margin-bottom: 5px" @click="deleteAll()">清除所有</button>
+      <button class="btn" style="margin-bottom: 5px" @click="currentDetail()">当前区域详情</button>
       <button class="btn" style="margin-bottom: 5px" @click="detail()">框选区域详情</button>
+    </div>
+    <div v-if="cardFlag" class="input-card" style="bottom: 230px;right: 10px; width: 300px;">
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #2B9AEB;padding: 0 0 5px 0">
+        <span style="font-size: 14px;font-weight: 900;display: inline-block;margin-left: 10px">详情</span>
+        <i class="iconfont icon-guanbi2fill" style="margin-right: 5px;font-size: 14px; user-select: none;cursor: pointer" @click="cardFlag=false" />
+      </div>
+      <div style="background: #fcfcfc;height: 200px;position: relative; overflow: hidden">
+        <div class="card-list">
+          <div class="card-item">
+            <div class="left">编号</div>
+            <div class="right">{{ currentCard.sid }}</div>
+          </div>
+          <div class="card-item">
+            <div class="left">名称</div>
+            <div class="right">{{ currentCard.name }}</div>
+          </div>
+          <div class="card-item">
+            <div class="left">区域面积（平方米）</div>
+            <div class="right">{{ currentCard.area.toFixed(1) + '㎡'}}</div>
+          </div>
+          <div class="card-item">
+            <div class="left">详情</div>
+            <div class="right" style="max-width: 200px">{{ currentCard.detail }}</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -277,5 +348,18 @@ export default {
 .drawer-container ::v-deep .el-drawer__body {
   background: #fcfcfc;;
   //background: #22272e;
+}
+
+.card-list{
+  font-size: 14px;
+  font-weight: 500;
+  .card-item{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    .right{
+      color: #666;
+    }
+  }
 }
 </style>

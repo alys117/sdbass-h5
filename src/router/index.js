@@ -145,7 +145,7 @@ export const constantRoutes = [
         path: 'test2/index',
         name: 'Equipment',
         component: () => import('@/views/amap/test2/index'),
-        meta: { title: 'test2', icon: 'el-icon-map-location' }
+        meta: { title: '分纤箱', icon: 'el-icon-map-location' }
       },
       {
         path: 'test/index',
